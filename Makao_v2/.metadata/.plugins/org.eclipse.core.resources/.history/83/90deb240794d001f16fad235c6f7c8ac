@@ -1,0 +1,18 @@
+package tests;
+import org.junit.*; 
+
+import client.ClientApplication;
+import static org.junit.Assert.* ;
+import shared.*;
+
+
+public class TestDrawingCard {
+	
+	@Test
+	public void testDrawingOneCard()
+	{
+		ClientApplication app = new ClientApplication();
+		app.setVisible(true);
+	}
+
+}

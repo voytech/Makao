@@ -1,0 +1,16 @@
+package tests;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import org.junit.* ;
+
+import client.CardNode;
+import client.ImagesBuffer;
+
+import shared.*;
+import static org.junit.Assert.*; 
+
+public class NodeTest {
+
+}

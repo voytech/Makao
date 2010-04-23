@@ -1,0 +1,10 @@
+package shared;
+
+public class CardSuitOutOfSetException extends Exception{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5409134603475423109L;
+
+}

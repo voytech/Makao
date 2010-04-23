@@ -1,0 +1,23 @@
+package client;
+
+import java.awt.image.BufferedImage;
+
+import shared.Card;
+
+public class CardNode {
+    private Object nestedObject = null;
+	public CardNode(Card card) {
+		// TODO Auto-generated constructor stub
+		nestedObject = card;
+	}
+	public Object getNestedObject() {
+		// TODO Auto-generated method stub
+		return nestedObject;
+	}
+	public BufferedImage getImage() {
+		// TODO Auto-generated method stub
+		return new BufferedImage(0,0,0);
+	}
+	
+
+}

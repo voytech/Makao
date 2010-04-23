@@ -1,0 +1,26 @@
+package tests;
+import java.util.List;
+
+import org.junit.*; 
+
+import client.CardNode;
+import client.ClientApplication;
+import client.ImagesBuffer;
+import static org.junit.Assert.* ;
+import shared.*;
+
+
+public class ImageBufferTest {
+	
+	@Test
+	public void testAddingBufferedImageUnderKeyAndRetrievingIt()
+	{
+		ImagesBuffer buffer = ImagesBuffer.getInstance();
+		buffer.addEntry("all","cards.jpg");
+		BufferedImage image = buffer.getEntry("all");
+		//buffer.splitImagesFromSource("cards.jpg",50,100);
+		//CardNode node= new CardNode(new Card(Card.Name.ACE,Card.Suit.SPADE));
+		
+	}
+
+}

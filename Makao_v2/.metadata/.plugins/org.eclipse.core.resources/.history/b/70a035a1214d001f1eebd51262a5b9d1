@@ -1,0 +1,44 @@
+package shared;
+
+public class Card {
+	public enum Name
+	{
+		TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+        NINE,
+        TEN,
+        JACK,
+        QUEEN,
+        KING,
+        ACE,
+        JOKER
+	}
+	public enum Suit
+	{
+		CLUB,
+        DIAMOND, 
+        HEART, 
+        SPADE
+	}
+    private Name name;
+    private Suit suit;
+    public Card(Name n,Suit s) throws CardOutOfSetException
+    { 
+    	if (n>13 || s>3) throw new CardOutOfSetException();
+    	this.name = n;
+    	this.suit = s;
+    }
+    public byte getName()
+    {
+       return name;
+    }
+    public byte getSuit()
+    {
+    	return suit;
+    }
+}

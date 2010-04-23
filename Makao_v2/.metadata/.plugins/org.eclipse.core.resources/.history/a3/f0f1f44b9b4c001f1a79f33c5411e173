@@ -1,0 +1,15 @@
+package tests;
+
+import org.junit.*; 
+import static org.junit.Assert.* ;
+import shared.*;
+public class RequestTest {
+
+	@Test
+	public void testWhetherAfterCreatingTestCanReturnArgumentsAndRequestID()
+	{
+	//for example we can request cards named TWO.
+	   Request req = new Request(Request.REQUEST_TWO, null);
+	   	   
+	}
+}

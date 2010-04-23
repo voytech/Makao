@@ -1,0 +1,37 @@
+package client;
+
+
+import java.awt.image.*;
+import java.util.Hashtable;
+
+public class ImagesBuffer {
+    private static ImagesBuffer iBuffer = null;
+	private Hashtable<String,String> buff = new Hashtable<String,String>();
+    private ImagesBuffer(){}
+	
+    public static ImagesBuffer getInstance() 
+    {
+		if (iBuffer== null) iBuffer=new ImagesBuffer();
+    	// TODO Auto-generated method stub
+		return iBuffer;
+	}
+
+	public void addEntry(String key,String source) 
+	{
+		buff.put(key, source);		
+	}
+
+	public void splitImagesFromSource(String string, int i, int j) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public BufferedImage getEntry(String string) 
+	{
+		// TODO Auto-generated method stub
+		BufferedImage im = new BufferedImage(0,0,0);
+		return im;
+	}
+
+}

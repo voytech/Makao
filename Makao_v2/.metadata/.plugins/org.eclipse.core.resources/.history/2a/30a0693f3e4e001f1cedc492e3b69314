@@ -1,0 +1,17 @@
+package gui;
+
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+public class CardNodeContainer extends ScreenItem{
+    private ArrayList<CardNode> nodes = new ArrayList<CardNode>();
+	
+    
+    public void draw(Graphics g)
+	{	
+    	for (CardNode node : nodes)
+    	{
+    		
+    	}
+	}
+}

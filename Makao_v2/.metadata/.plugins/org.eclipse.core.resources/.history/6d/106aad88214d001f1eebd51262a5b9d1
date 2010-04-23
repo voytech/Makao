@@ -1,0 +1,37 @@
+package shared;
+
+public class Card {
+    public static final byte TWO=0,
+                             THREE=1,
+                             FOUR=2,
+                             FIVE=3,
+                             SIX=4,
+                             SEVEN=5,
+                             EIGHT=6,
+                             NINE=7,
+                             TEN=8,
+                             JACK=9,
+                             QUEEN=10,
+                             KING=11,
+                             ACE=12,
+                             JOKER=13;
+    public static final byte CLUB=0,
+                             DIAMOND=1, 
+                             HEART=2, 
+                             SPADE=3;
+    private byte suit,name;
+    public Card(byte n,byte s) throws CardOutOfSetException
+    { 
+    	if (n>13 || s>3) throw new CardOutOfSetException();
+    	this.name = n;
+    	this.suit = s;
+    }
+    public byte getName()
+    {
+       return name;
+    }
+    public byte getSuit()
+    {
+    	return suit;
+    }
+}

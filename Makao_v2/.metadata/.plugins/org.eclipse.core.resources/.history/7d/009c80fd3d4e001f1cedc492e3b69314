@@ -1,0 +1,8 @@
+package gui;
+
+import java.util.ArrayList;
+
+public class CardNodeContainer extends ScreenItem{
+    private ArrayList<CardNode> nodes = new ArrayList<CardNode>();
+    
+}

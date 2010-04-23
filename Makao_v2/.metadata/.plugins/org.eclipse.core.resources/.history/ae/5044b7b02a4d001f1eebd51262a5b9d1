@@ -1,0 +1,136 @@
+package client;
+
+import shared.Card;
+import shared.CardStack;
+import shared.Request;
+
+public class Performer {
+
+	private CardStack stack = null;
+	private Card[] selection = null;
+	private Request incRequest = null;
+	public Performer(CardStack localStack) {
+		stack = localStack;
+		// TODO     	
+		//addRequest();
+    	//addMessage();
+		//bool makeRequest(Request);
+    	//packet(); - ready for send by client.
+	}
+	public void setSelection(Card[] selectedCards) {
+		// TODO Auto-generated method stub
+		selection = selectedCards;
+	}
+	
+	public void setIncomingRequest(Request req)
+	{
+	   this.incRequest = req;
+	}
+	
+	public boolean setOutgoingRequest(Request request) {
+		Card bottomCard = selection[0];
+		if (bottomCard.getName() == Card.Name.JACK)
+		{
+		   if (request.getID() == Request.REQUEST_CARD_NAME) 
+		   {
+			   if () return true;
+		   }
+		   
+		}
+		return false;
+	}
+	
+	public boolean testSelection()
+	{   
+	  Card[] cards = stack.getArray();
+	  Card topStack = cards[stack.getCount()-1];
+	  Card bottomSelection = selection[0];
+	  if (incRequest!=null) if (incRequest.getID() == Request.REQUEST_WAITING ) return false;
+	  if (topStack.getName() == Card.QUEEN || bottomSelection.getName() == Card.QUEEN) return  true;
+	  if (incRequest!=null)
+	  {	
+		  if ( incRequest.getID() == Request.REQUEST_TWO )
+		  {
+			  if ( bottomSelection.getName() == Card.TWO ) return true;
+			  else return false;
+		  }
+		  else 
+		  if ( incRequest.getID() == Request.REQUEST_THREE )
+		  {
+			  if ( bottomSelection.getName() == Card.THREE ) return true;
+			  else return false;
+		  }
+		  else
+		  if ( incRequest.getID() == Request.REQUEST_FOUR )
+		  {
+			  if ( bottomSelection.getName() == Card.FOUR ) return true;
+			  else return false;
+		  }
+		  else
+		  if ( incRequest.getID() == Request.REQUEST_FIVE )
+		  {
+			  if ( bottomSelection.getName() == Card.FIVE ) return true;
+			  else return false;
+		  }
+		  else		  
+		  if ( incRequest.getID() == Request.REQUEST_SIX )
+		  {
+			  if ( bottomSelection.getName() == Card.SIX ) return true;
+			  else return false;
+		  }
+		  else		  
+		  if ( incRequest.getID() == Request.REQUEST_SEVEN )
+		  {
+			  if ( bottomSelection.getName() == Card.SEVEN ) return true;
+			  else return false;
+		  }
+		  else
+		  if ( incRequest.getID() == Request.REQUEST_EIGHT )
+		  {
+			  if ( bottomSelection.getName() == Card.EIGHT ) return true;
+			  else return false;
+		  }
+		  else		  
+		  if ( incRequest.getID() == Request.REQUEST_NINE )
+		  {
+			  if ( bottomSelection.getName() == Card.NINE ) return true;
+			  else return false;
+		  }
+	  	  else
+	  	  if ( incRequest.getID() == Request.REQUEST_TEN )
+		  {
+			  if ( bottomSelection.getName() == Card.TEN ) return true;
+			  else return false;
+		  }
+	  	  else		  
+		  if ( incRequest.getID() == Request.REQUEST_CLUBS )
+		  {
+			  if ( bottomSelection.getSuit() == Card.CLUB ) return true;
+			  else return false;
+		  }
+		  else
+		  if ( incRequest.getID() == Request.REQUEST_DIAMOND )
+		  {
+			  if ( bottomSelection.getSuit() == Card.DIAMOND ) return true;
+			  else return false;
+		  }
+		  else		  
+		  if ( incRequest.getID() == Request.REQUEST_HEARTS )
+		  {
+			  if ( bottomSelection.getSuit() == Card.HEART ) return true;
+			  else return false;
+		  }
+		  else
+		  if ( incRequest.getID() == Request.REQUEST_SPADES )
+		  {
+			  if ( bottomSelection.getSuit() == Card.SPADE ) return true;
+			  else return false;
+		  }		 	
+	  }
+	  return ((topStack.getName() == bottomSelection.getName()) || (topStack.getSuit() == bottomSelection.getSuit()));	
+	}
+
+	
+
+
+}

@@ -1,0 +1,39 @@
+package client;
+
+import shared.Card;
+import shared.CardStack;
+import shared.Request;
+
+public class Performer {
+
+	private CardStack stack = null;
+	private Card[] selection = null;
+	private Request incRequest = null;
+	public Performer(CardStack localStack) {
+		stack = localStack;
+		// TODO     	
+		//addRequest();
+    	//addMessage();
+    	//packet(); - ready for send by client.
+	}
+	public void setSelection(Card[] selectedCards) {
+		// TODO Auto-generated method stub
+		selection = selectedCards;
+	}
+	public void setIncomingRequest(Request req)
+	{
+	   this.incRequest = req;
+	}
+	public boolean testSelection()
+	{
+	  Card[] cards = stack.getArray();
+	  Card topStack = cards[stack.getCount()-1];
+	  Card bottomSelection = selection[0];
+	  //if ( incRequest.getID() == Request.REQUEST_TWO ) if (bottomSelection.getName() == Card.TWO) return true;
+	  if (topStack.getName() == Card.FIVE || bottomSelection.getName() == Card.FIVE) return true;
+	  return ((topStack.getName() == bottomSelection.getName()) || (topStack.getSuit() == bottomSelection.getSuit()));	
+	}
+	
+
+
+}

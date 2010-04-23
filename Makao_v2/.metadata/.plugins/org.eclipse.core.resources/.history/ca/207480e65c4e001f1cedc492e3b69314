@@ -1,0 +1,87 @@
+package gui;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+
+import javax.swing.BorderFactory;
+import javax.swing.border.BevelBorder;
+
+import client.ImagesBuffer;
+
+import shared.Card;
+
+public class PlayerCards extends CardNodeContainer implements MouseListener{
+	 private int lastCardPointer;
+	 PlayerCards()
+	 {
+	    this.setLayout(null);
+	    //this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED), "Your cards"));
+	    //this.addMouseListener(this);
+	 }
+	 public void pushCardNode(CardNode node)
+	 {
+		 super.pushCardNode(node);
+		 
+		 node.setEnabled(true);
+		 lastCardPointer+=cardOffset;
+		 node.setLocation(new Point(lastCardPointer,y+30));
+	     node.setSize(new Dimension(cardWidth,cardHeight));   
+		 this.add(node);
+		 node.addMouseListener(this);
+		 this.validate();
+	 }
+	 public void paintComponent(Graphics g)
+	 { 
+		 
+		 super.paintComponent(g);
+		 
+		 Graphics2D g2 =(Graphics2D)g;
+		 //g2.dr
+		 //BufferedImage table = ImagesBuffer.getInstance().getEntry("table");
+		 //g2.drawImage(table, 0, 0,  null);
+	 }
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		CardNode node = (CardNode)arg0.getSource();
+		if (!node.isSelected())
+		{
+			node.setLocation(node.getX(), node.getY()-20);
+			node.setSelected(true);
+		}
+		else 
+		{
+			node.setLocation(node.getX(), node.getY()+20);
+			node.setSelected(false);
+		}
+		this.repaint();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+}

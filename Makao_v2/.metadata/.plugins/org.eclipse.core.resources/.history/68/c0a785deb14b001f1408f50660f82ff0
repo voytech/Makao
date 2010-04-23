@@ -1,0 +1,41 @@
+package tests;
+
+import shared.*;
+
+import org.junit.* ;
+
+import shared.Card;
+import static org.junit.Assert.*; 
+
+public class CardTest 
+{
+     @Test
+     public void TestWheterAfterCreatingCardICanGetSuitAndName()
+     {
+    	Card c = null;
+		try {
+			c = new Card(Card.ACE,Card.SPADE);
+		} catch (CardNameOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	Assert.assertEquals(Card.ACE, c.getName());
+    	Assert.assertEquals(Card.SPADE, c.getSuit()); 
+     }
+     @Test (expected =  CardNameOutOfSetException.class) 
+     public void TestCreatingCardWithNameOutOfSet() throws CardNameOutOfSetException
+     {
+    	 Card c = new Card((byte)15,Card.SPADE);
+     }
+     @Test (expected =  CardSuitOutOfSetException.class)
+     public void TestCreatingCardWithSuitOutOfBound() throws CardSuitOutOfSetException
+     {
+    	 try {
+			Card c = new Card(Card.ACE,(byte)4);
+		} catch (CardNameOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+     }
+     
+}

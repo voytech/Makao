@@ -1,0 +1,6 @@
+package client;
+
+public interface ISizeable {
+      void setSize(int sX,int sY);
+      
+}

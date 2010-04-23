@@ -1,0 +1,321 @@
+package tests;
+
+import java.util.ArrayList;
+
+import org.junit.* ;
+
+import client.Performer;
+
+import shared.Card;
+import shared.CardOutOfSetException;
+import shared.CardStack;
+import shared.Request;
+import static org.junit.Assert.* ;
+
+public class PerformerTest 
+{
+    @Test
+    public void testWheterWeCanPutNotFunctionCardWithTheSameNameAsOnTheTopOfStack()
+    {
+    	Performer cs;
+    		for (Card.Name name1 : Card.Name.values())
+    		{
+    			for (Card.Suit suit1 : Card.Suit.values())
+    			{
+    				for (Card.Name name2 : Card.Name.values())
+    	    		{
+    	    			for (Card.Suit suit2 : Card.Suit.values())
+    	    			{
+    	    				if (((name1==name2) || (suit1==suit2)) && (name1!=Card.Name.QUEEN) && (name2!=Card.Name.QUEEN))
+    	    				{
+    	    					Card[] selectedCards = null;
+    	    			    	CardStack pack = new CardStack();
+    	    			    	cs = new Performer(pack);
+    	    			    	
+    	    					selectedCards = new Card[] {new Card(name1,suit1)};
+    	    					pack.push(new Card(name2,suit2));
+    	    					cs.setSelection(selectedCards);    
+    	    					Assert.assertTrue(cs.testSelection());
+    	    				}
+    	    				else Assert.assertFalse(false);
+    	    			}
+					}
+    			}
+    		}
+    }
+    @Test
+    public void testWheterWeCan_NOT_PutCardWithTheAnotherSuitAndAnotherName()
+    {
+    	Performer cs;
+    		for (Card.Name name1 : Card.Name.values())
+    		{
+    			for (Card.Suit suit1 : Card.Suit.values())
+    			{
+    				for (Card.Name name2 : Card.Name.values())
+    	    		{
+    	    			for (Card.Suit suit2 : Card.Suit.values())
+    	    			{
+    	    				if ((name1!=name2) && (suit1!=suit2) && (name1!=Card.Name.QUEEN) && (name2!=Card.Name.QUEEN))
+    	    				{
+    	    					Card[] selectedCards = null;
+    	    			    	CardStack pack = new CardStack();
+    	    			    	cs = new Performer(pack);
+    	    			    	
+    	    					selectedCards = new Card[] {new Card(name1,suit1)};
+    	    					pack.push(new Card(name2,suit2));
+    	    					cs.setSelection(selectedCards);    
+    	    					Assert.assertFalse(cs.testSelection());
+    	    				}
+    	    				else Assert.assertFalse(false);
+    	    			}
+					}
+    			}
+    		}			  
+    }
+    @Test
+    public void testWhetherCanPushIfOnStackTopIsQueen()
+    {
+    	Performer cs;
+    	try {
+    		for (byte i= 0; i<14; i++)
+    		{
+    			for (byte j=0; j<4;j++)
+    			{
+    				for (byte l=0; l<4;l++)
+        			{
+    					Card[] selectedCards = null;
+    					CardStack pack = new CardStack();
+    					cs = new Performer(pack);
+    	    			    	
+    					selectedCards = new Card[] {new Card(i,j)};
+    					pack.push(new Card(Card.QUEEN,l));
+    					cs.setSelection(selectedCards);    
+    					Assert.assertTrue(cs.testSelection());
+        			}
+    	    	}
+    		}
+    	} catch (CardOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+    	
+    }
+    @Test
+    public void testWhetherCanPushQueenOnStack()
+    {
+    	Performer cs;
+    	try {
+    		for (byte i= 0; i<14; i++)
+    		{
+    			for (byte j=0; j<4;j++)
+    			{
+    				for (byte l=0; l<4;l++)
+        			{
+    					Card[] selectedCards = null;
+    					CardStack pack = new CardStack();
+    					cs = new Performer(pack);
+    	    			    	
+    					selectedCards = new Card[] {new Card(Card.QUEEN,l)};
+    					pack.push(new Card(i,j));
+    					cs.setSelection(selectedCards);    
+    					Assert.assertTrue(cs.testSelection());
+        			}
+    	    	}
+    		}
+    	} catch (CardOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+    	
+    }
+    @Test(expected = NullPointerException.class)
+    public void testIfSelectionEmptyDuringTest() throws NullPointerException
+    {
+    	CardStack stack = new CardStack();
+    	try {
+			stack.push(new Card(Card.Name.ACE,Card.Suit.SPADE));
+		} catch (CardOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      	Performer cs = new Performer(stack);
+    	cs.testSelection();
+    }
+    @Test(expected = NullPointerException.class)
+    public void testIfStackNullDuringTest() throws NullPointerException
+    {
+    	try {
+			Card[] selection = new Card[]{new Card(Card.ACE,Card.SPADE)};
+		} catch (CardOutOfSetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      	Performer cs = new Performer(null);
+    	cs.testSelection();
+    }
+    @Test
+    public void testWhetherCanPushCardIfServerHasGeneratedRequest()
+    {
+       for (byte i=0;i<15;i++)
+       {
+    	   Request req = new Request(i,null);
+    	   CardStack stack = new CardStack();
+    	   try {
+			stack.push(new Card(Card.ACE,Card.CLUB));
+		} catch (CardOutOfSetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	   Performer performer = new Performer(stack);
+    	   performer.setIncomingRequest(req);
+    	   for (byte j=0;j<14;j++)
+    	   {
+    		   for (byte k=0;k<4;k++)
+ 			   {
+ 				 Card card = null;
+ 				 try 
+ 				 {
+ 					card = new Card(j,k);
+					performer.setSelection(new Card[]{card});
+				 } catch (CardOutOfSetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+				 }
+				 if (Request.REQUEST_WAITING == i) Assert.assertFalse(performer.testSelection()); 
+				 if ((card.getName() == Card.QUEEN) && (Request.REQUEST_WAITING != i)) Assert.assertTrue(performer.testSelection());
+				 if (Request.REQUEST_TWO == i)
+				 {
+					 if (card.getName() == Card.TWO) Assert.assertTrue(performer.testSelection()); 
+				 }
+				 if (Request.REQUEST_THREE== i)
+				 {
+					 if (card.getName() == Card.THREE) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_FOUR == i)
+				 {
+					 if (card.getName() == Card.FOUR) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_FIVE == i)
+				 {
+					 if (card.getName() == Card.FIVE) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_SIX == i)
+				 {
+					 if (card.getName() == Card.SIX) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_SEVEN == i)
+				 {
+					 if (card.getName() == Card.SEVEN) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_EIGHT == i)
+				 {
+					 if (card.getName() == Card.EIGHT) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_NINE == i)
+				 {
+					 if (card.getName() == Card.NINE) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_TEN == i)
+				 {
+					 if (card.getName() == Card.TEN) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_QUEEN == i)
+				 {
+					 if (card.getName() == Card.QUEEN) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_CLUBS == i)
+				 {
+					 if (card.getSuit() == Card.CLUB) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_DIAMOND == i)
+				 {
+					 if (card.getSuit() == Card.DIAMOND) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_HEARTS == i)
+				 {
+					 if (card.getSuit() == Card.HEART) Assert.assertTrue(performer.testSelection());
+				 }
+				 if (Request.REQUEST_SPADES == i)
+				 {
+					 if (card.getSuit() == Card.SPADE) Assert.assertTrue(performer.testSelection());
+				 }				 
+    		   }    		   
+    	   }
+       }
+    }
+    //@Test
+    /*public void testWhetherSelectionCanHaveOnlyCardsWithSameName()
+    {
+        Card[] selection = null;		
+        for (byte c_num = 1 ; c_num <= 4;c_num++)
+        {	
+        	CardStack cards = new CardStack();	
+        	for (byte i=0;i<14;i++)
+        		for (byte j=0;j<4;j++)
+        		{	
+        			Card card = null;
+        			try {
+						card = new Card(i,j);
+						cards.
+					} catch (CardOutOfSetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+        	    }
+        	}
+        }
+       
+    }*/
+    @Test
+    public void testWhetherCanMakeNameRequest()
+    {
+    	Performer perf = new Performer(null);
+    	for (byte i=0;i<14;i++)
+    		for (byte j=0;j<4;j++)
+    		{	
+    			Card card = null;
+    			try {
+					card = new Card(i,j);					
+				} catch (CardOutOfSetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				perf.setSelection(new Card[]{card});
+				for (byte k=0; k<15; k++) 
+ 			    {
+					if (card.getName() == Card.JACK)
+					{  	   
+    				   if ((k>=0) && (k<=6)) Assert.assertTrue(perf.setOutgoingRequest(new Request(k)));
+    				   else Assert.assertFalse(perf.setOutgoingRequest(new Request(k)));
+    			    }
+					else Assert.assertFalse(perf.setOutgoingRequest(new Request(k)));
+    			}			
+    	    }
+    }
+    @Test
+    public void testWhetherCanMakeSuitRequest()
+    {
+    	Performer perf = new Performer(null);
+    	for (byte i=0;i<14;i++)
+    		for (byte j=0;j<4;j++)
+    		{	
+    			Card card = null;
+    			try {
+					card = new Card(i,j);					
+				} catch (CardOutOfSetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				perf.setSelection(new Card[]{card});
+				for (byte k=0; k<15; k++) 
+ 			    {
+					if (card.getName() == Card.ACE)
+					{  	   
+    				   if ((k>=7) && (k<=10)) Assert.assertTrue(perf.setOutgoingRequest(new Request(k)));
+    				   else Assert.assertFalse(perf.setOutgoingRequest(new Request(k)));
+    			    }
+					else Assert.assertFalse(perf.setOutgoingRequest(new Request(k)));
+    			}			
+    	    }
+    }
+}

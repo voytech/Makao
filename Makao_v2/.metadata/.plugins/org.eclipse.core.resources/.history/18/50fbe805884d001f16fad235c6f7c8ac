@@ -1,0 +1,24 @@
+package tests;
+import java.util.List;
+
+import org.junit.*; 
+
+import client.CardNode;
+import client.ClientApplication;
+import static org.junit.Assert.* ;
+import shared.*;
+
+
+public class TestDrawingCard {
+	
+	@Test
+	public void testGeneratingCardNodes()
+	{
+		ImagesBuffer buffer = ImagesBuffer.getInstance();
+		buffer.addEntry("cards.jpg");
+		buffer.splitImagesFromSource("cards.jpg",50,100);
+		//CardNode node= new CardNode(new Card(Card.Name.ACE,Card.Suit.SPADE));
+		
+	}
+
+}

@@ -1,0 +1,40 @@
+package shared;
+
+import java.util.*;
+
+public class CardStack {
+	   protected List<Card> cards = new ArrayList<Card>(); 
+	   
+	   public int getCount()
+       {
+          return cards.size();
+       }
+	   
+       public Card[] getArray()
+       {
+    	   return this.cards.toArray(new Card[0]);
+       }
+       public void push(Card card)
+       {
+    	  for (int i= 0; i<cards.size();i++)
+    	  {
+    	     Card c = cards.get(i);
+    	     if ((c.getName() == card.getName()) && (c.getSuit() == card.getSuit()))
+    	     {
+    	       return;  
+    	     }
+    	  }
+          cards.add(card);
+       }
+       public Card pop()
+       { 
+    	  if (cards.size() > 0) return cards.remove(cards.size()-1);  
+          return null;
+       }
+       public Card pop(int number)
+       { 
+    	  
+    	  if (cards.size() > 0) return cards.remove(cards.size()-1);  
+          return null;
+       }
+}

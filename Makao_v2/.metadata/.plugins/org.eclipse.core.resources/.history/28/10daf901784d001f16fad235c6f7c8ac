@@ -1,0 +1,10 @@
+package tests;
+import org.junit.*; 
+import static org.junit.Assert.* ;
+import shared.*;
+
+@Test
+public class TestDrawingCard {
+	Client
+
+}

@@ -1,0 +1,10 @@
+package tests;
+
+import org.junit.* ;
+
+import shared.*;
+import static org.junit.Assert.*; 
+
+public class CardNodeTest {
+
+}

@@ -1,0 +1,13 @@
+package shared;
+
+public class Request {
+	 public static final byte REQUEST_TWO = 0;
+	 
+	 byte request;
+     public Request(byte request, Object[] args) {
+		// TODO Auto-generated constructor stub
+    	 this.request = request;
+	}
+
+	
+}

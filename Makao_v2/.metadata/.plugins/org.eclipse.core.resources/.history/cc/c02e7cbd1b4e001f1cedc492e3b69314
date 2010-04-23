@@ -1,0 +1,13 @@
+package client;
+
+import shared.Card;
+
+public class CardNode {
+    private Object nestedObject = null;
+	public CardNode(Card card) {
+		// TODO Auto-generated constructor stub
+		nestedObject = card;
+	}
+	
+
+}

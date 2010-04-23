@@ -1,0 +1,13 @@
+package client;
+
+public class ImagesBuffer {
+    private static iBuffer = null;
+	private ImagesBuffer()
+	{	
+	}
+    public static ImagesBuffer getInstance() {
+		// TODO Auto-generated method stub
+		return new ImagesBuffer();
+	}
+
+}
