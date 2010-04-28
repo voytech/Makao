@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testrun name="RequestsGeneratorTest" project="Makao" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="tests.RequestsGeneratorTest" time="0.0">
-    <testcase name="testWetherGeneratesTwoOrThreeRequest" classname="tests.RequestsGeneratorTest" time="0.0"/>
-    <testcase name="testWetherGeneratesTakeRequest" classname="tests.RequestsGeneratorTest" time="0.0"/>
-    <testcase name="testWetherGeneratesKingSpadeOrHearRequestProperly" classname="tests.RequestsGeneratorTest" time="0.0"/>
-  </testsuite>
-</testrun>

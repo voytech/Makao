@@ -56,8 +56,8 @@
 <fullyQualifiedTypeName name="java.net.Socket"/>
 <fullyQualifiedTypeName name="shared.Messenger"/>
 <fullyQualifiedTypeName name="shared.Packet"/>
-<fullyQualifiedTypeName name="shared.Request"/>
 <fullyQualifiedTypeName name="shared.Card"/>
-<fullyQualifiedTypeName name="shared.Card.Name"/>
+<fullyQualifiedTypeName name="shared.Request"/>
 <fullyQualifiedTypeName name="shared.Card.Suit"/>
+<fullyQualifiedTypeName name="shared.Card.Name"/>
 </qualifiedTypeNameHistroy>
