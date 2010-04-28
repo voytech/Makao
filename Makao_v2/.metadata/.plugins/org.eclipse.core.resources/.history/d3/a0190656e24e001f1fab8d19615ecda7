@@ -1,0 +1,37 @@
+package gui;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.util.Random;
+
+public class TableCardContainer extends CardNodeContainer{
+	 //private int lastCardPointer;
+	 public TableCardContainer()
+	 {
+		 this.setLayout(null);
+		    this.setOpaque(false);
+	 }
+	 public void pushCardNode(CardNode node)
+	 {
+		 super.pushCardNode(node);		 
+		 //board.addTableCardComponent(node);
+         reorder(); 
+		 //node.addMouseListener(this);
+		// node.addMouseMotionListener(this);
+		 //board.repaint();
+	 }
+	 private void reorder()
+	 {		 
+		 int x = this.x,y = this.y;
+		 Random r = new Random();		 
+		 for (int i=0;i<this.getComponentCount();i++)
+		 {
+			 CardNode node = (CardNode)this.getComponent(i);
+			 {
+				 node.setLocation(new Point(x+r.nextInt(80),y+r.nextInt(80)));	
+				 node.setSize(new Dimension(cardWidth,cardHeight));
+			 }
+		 }
+	 }
+
+}

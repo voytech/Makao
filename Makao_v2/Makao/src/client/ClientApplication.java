@@ -1,10 +1,15 @@
 package client;
-import gui.Display;
+import gui.Board;
+
 
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -20,15 +25,28 @@ public class ClientApplication extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+    private static ClientApplication ca=null;
 	/**
 	 * @param args
 	 */
-	public ClientApplication()
+	private ClientApplication()
 	{
 	    setSize(1000, 1000);
 	    setTitle("Makao");
 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	public static ClientApplication getInstance()
+	{
+		if (ca== null) ca=new ClientApplication();
+    	// TODO Auto-generated method stub
+		return ca;
+	}
+	public void setCustomCursor(BufferedImage image)
+	{
+		Toolkit toolkit = Toolkit.getDefaultToolkit(); 
+		Cursor cursor = toolkit.createCustomCursor(image, new Point(0,0), "Pencil"); 
+	    this.setCursor(cursor);
+		//this.setCursor(cursor);	
 	}
 	private static void initializeBuffer()
 	{
@@ -47,9 +65,9 @@ public class ClientApplication extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		 initializeBuffer();
-         ClientApplication app = new ClientApplication();
+         ClientApplication app = ClientApplication.getInstance();
          Container pane = app.getContentPane();
-         Display d =new Display();
+         Board d =new Board();
          
          d.setSize(500,500);
          //d.setSize(app.getSize());

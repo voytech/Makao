@@ -1,0 +1,12 @@
+package gui;
+
+public class TableCardContainer extends CardNodeContainer{
+	 //private int lastCardPointer;
+	 private Board board = null;
+	 public TableCardContainer(Board board)
+	 {
+		 this.board = board;
+	 }
+	 
+
+}

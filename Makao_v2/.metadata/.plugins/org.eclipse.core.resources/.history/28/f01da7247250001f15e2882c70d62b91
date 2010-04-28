@@ -1,0 +1,12 @@
+package shared;
+
+import java.io.Serializable;
+
+public class Packet implements Serializable{
+
+	private String message = null;
+	public Packet(String string) {
+		this.message = string;
+	}
+
+}

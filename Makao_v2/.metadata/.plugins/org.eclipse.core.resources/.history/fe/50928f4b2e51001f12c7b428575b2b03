@@ -1,0 +1,22 @@
+package tests;
+import java.net.Socket;
+
+import org.junit.* ;
+
+import server.PlayerHandle;
+import static org.junit.Assert.* ;
+public class ClientHandleTest {
+	@Test
+	public void testWetherCanCreateClientHandle()
+	{
+		Socket client_socket = null;
+		PlayerHandle handle = new PlayerHandle(client_socket);
+		//handle.getPlayerRequest();
+		handle.getPlayerInfo();
+		//
+		handle.hasPacketReceived();
+		handle.getCurrentPacket();
+		
+		
+	}
+}

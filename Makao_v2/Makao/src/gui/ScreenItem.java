@@ -23,5 +23,4 @@ public class ScreenItem extends JComponent{
 		// TODO Auto-generated method stub
 		return image;
 	}
-	public void paint(Graphics g){}
 }

@@ -1,0 +1,10 @@
+package gui;
+
+import javax.swing.JPanel;
+
+public class PlayerInterface extends JPanel{
+	public PlayerInterface()
+	{
+		
+	}
+}

@@ -1,0 +1,25 @@
+package gui;
+
+import java.awt.Graphics;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+public class PlayerInterface extends JPanel{
+	public PlayerInterface()
+	{
+		//this.setLayout(null);
+		JButton takeCard = new JButton("Take");
+		JButton putCard = new JButton("Put");
+		JButton requestSuit = new JButton("Request suit");
+		JButton requestName = new JButton("Request name");
+		this.add(takeCard);
+		this.add(putCard);
+		this.add(requestSuit);
+		this.add(requestName);
+	}
+	public void paintComponent(Graphics g)
+	{
+		
+	}
+}

@@ -45,10 +45,15 @@ public class CardNode extends ScreenItem {
 		if (suit.equals(Card.Suit.SPADE)) return "s";
 		return null;
 	}
+	public void setRotation(double theta)
+	{
+		//super.setLocation(x-, y)
+	}
 	public void paint(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D)g;
 		//g2.drawImage(image,null,posX, posY);
+		//g2.rotate(0.9f);
 		g2.drawImage(image, 0, 0,this.getSize().width,this.getSize().height,  null);
 	}
 	

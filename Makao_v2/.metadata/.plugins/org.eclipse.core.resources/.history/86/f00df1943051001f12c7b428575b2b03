@@ -1,0 +1,37 @@
+package server;
+
+import java.net.Socket;
+
+import shared.Messenger;
+import shared.Packet;
+import shared.PacketListener;
+
+public class PlayerHandle implements PacketListener{
+    private Messenger messenger = null;
+	public PlayerHandle(Socket p_socket)
+	{
+		messenger = new Messenger(p_socket);
+		messenger.addPacketListener(this);
+	}
+
+	public boolean hasPacketReceived() {
+		return false;
+		
+	}
+
+	public Packet getCurrentPacket() {
+		return null;
+		
+	}
+
+	public void getPlayerInfo() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void packetReceived(Packet packet) {
+		// TODO Auto-generated method stub
+		
+	}
+}

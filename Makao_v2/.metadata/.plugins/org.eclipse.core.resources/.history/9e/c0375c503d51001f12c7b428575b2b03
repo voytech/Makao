@@ -1,0 +1,30 @@
+package server;
+
+import shared.CardStack;
+import shared.Request;
+
+public class RequestsQueue {
+
+	private CardStack stack = null;
+	private Request incomming = null;
+	public void setCards(CardStack stack)
+	{
+		this.stack = stack;
+	}
+
+	public void setPlayerRequest(Request request) {
+		// TODO Auto-generated method stub
+	    incomming = request;	
+	}
+
+	public void generateRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Request getRequest() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

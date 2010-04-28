@@ -1,0 +1,17 @@
+package tests;
+import org.junit.* ;
+import static org.junit.Assert.* ;
+public class ClientHandleTest {
+	@Test
+	public void testWetherCanCreateClientHandle()
+	{
+		PlayerHandle handle = new PlayerHandle(client_socket);
+		//handle.getPlayerRequest();
+		handle.getPlayerInfo();
+		//
+		handle.hasCurrentPacket();
+		handle.getCurrentPacket();
+		
+		
+	}
+}

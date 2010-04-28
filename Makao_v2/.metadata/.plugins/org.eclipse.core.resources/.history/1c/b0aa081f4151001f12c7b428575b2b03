@@ -1,0 +1,86 @@
+package tests;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import org.junit.* ;
+
+import server.RequestsQueue;
+import shared.Card;
+import shared.CardStack;
+import shared.Messenger;
+import shared.Packet;
+import shared.Request;
+import server.*;
+import static org.junit.Assert.* ;
+
+
+public class RequestsQueueTest {
+	@Test
+	public void testWetherCanCreateReuestQueue()
+	{
+		RequestsQueue queue = new RequestsQueue();
+		
+		CardStack stack = new CardStack();
+		queue.setCards(stack);
+		//We have to generate here all requests.
+		//And then send them to the server-side player handle.	
+		for (byte i =0; i<4;i++)
+		{
+			//Two is reserved only to be made by server
+			if (i!=2)
+			{
+				Request request = null;
+				if (i==0)
+				{
+					//we have to add some arguments because we are requesting card names
+			        for (Card.Name name : Card.Name.values())
+			        {
+			        	request = new Request(i,name);
+			        	queue.setPlayerRequest(request);
+			        	queue.generateRequest();
+			            if ((name.equals(Card.Name.FIVE)) || 
+						    (name.equals(Card.Name.SIX))  ||
+							(name.equals(Card.Name.SEVEN)) ||
+							(name.equals(Card.Name.EIGHT)) ||
+							(name.equals(Card.Name.NINE)) ||
+							(name.equals(Card.Name.TEN))  ||
+							(name.equals(Card.Name.QUEEN)))
+			            {
+			            	Assert.assertEquals(request, queue.getRequest());
+			        	}
+						//queue.getRequest();			           
+			        }
+				}
+				else 
+					if (i==1)
+					{
+						for (Card.Suit suit : Card.Suit.values())
+						{
+							request = new Request(i,suit);
+							queue.setPlayerRequest(request);
+							queue.generateRequest();
+							if ((name.equals(Card.Name.FIVE)) || 
+							    (name.equals(Card.Name.SIX))  ||
+							    (name.equals(Card.Name.SEVEN)) ||
+							    (name.equals(Card.Name.EIGHT)) ||
+							    (name.equals(Card.Name.NINE)) ||
+							    (name.equals(Card.Name.TEN))  ||
+							    (name.equals(Card.Name.QUEEN)))
+							{
+								Assert.assertEquals(request, queue.getRequest());
+							}
+						//queue.getRequest();			           
+						}
+					}
+					}
+				}
+			}
+			
+		}
+		//queue.setPlayer(player);
+		//queue.generateRequest();
+		//queue.getRequest();
+	}
+}

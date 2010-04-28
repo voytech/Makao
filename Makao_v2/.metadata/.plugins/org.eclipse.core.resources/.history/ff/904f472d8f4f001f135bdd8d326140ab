@@ -1,0 +1,83 @@
+package gui;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.Random;
+
+import shared.Card;
+
+public class TableCardContainer extends CardNodeContainer implements DropTargetListener, MouseMotionListener{
+	 //private int lastCardPointer;
+	 public TableCardContainer()
+	 {
+		 this.setLayout(null);
+		    this.setOpaque(false);
+		    this.addMouseMotionListener(this);
+	 }
+	 public void pushCardNode(CardNode node)
+	 {
+		 super.pushCardNode(node);		 
+		 throwOnTable(node); 
+		 //node.addMouseListener(this);
+		// node.addMouseMotionListener(this);
+		 //board.repaint();
+	 }
+
+	 private void throwOnTable(CardNode node)
+	 {		 
+		 int x = this.x,y = this.y;
+		 Random r = new Random();
+		 node.setLocation(new Point(x+r.nextInt(80),y+r.nextInt(80)));	
+		 node.setSize(new Dimension(cardWidth,cardHeight));
+		 //node.rotate()
+		 /*for (int i=0;i<this.getComponentCount();i++)
+		 {
+			 CardNode node = (CardNode)this.getComponent(i);
+			 {
+				 
+			 }
+		 }*/
+	 }
+	@Override
+	public void dragEnter(DropTargetDragEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void dragExit(DropTargetEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void dragOver(DropTargetDragEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void drop(DropTargetDropEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void dropActionChanged(DropTargetDragEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		System.out.println("From table");
+		
+	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

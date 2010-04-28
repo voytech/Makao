@@ -1,0 +1,9 @@
+package shared;
+
+public class Packet {
+
+	public Packet(String string) {
+		// TODO Auto-generated constructor stub
+	}
+
+}

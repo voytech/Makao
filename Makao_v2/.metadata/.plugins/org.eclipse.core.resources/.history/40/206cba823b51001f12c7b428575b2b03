@@ -1,0 +1,88 @@
+package tests;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import org.junit.* ;
+
+import server.RequestsQueue;
+import shared.Card;
+import shared.CardStack;
+import shared.Messenger;
+import shared.Packet;
+import shared.Request;
+import server.*;
+import static org.junit.Assert.* ;
+
+
+public class RequestsQueueTest {
+	@Test
+	public void testWetherCanCreateReuestQueue()
+	{
+		RequestsQueue queue = new RequestsQueue();
+		ServerSocket socket = null;
+		try {
+			socket = new ServerSocket(9090);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Messenger messenger = null;
+		try {
+			messenger = new Messenger(new Socket("127.0.0.1",9090));
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Socket client = null;
+		try {
+			client = socket.accept();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PlayerHandle handle = new PlayerHandle(client);
+		
+		CardStack stack = new CardStack();
+		queue.setCards(stack);
+		queue.setPlayer(handle);
+		//We have to generate here all requests.
+		//And then send them to the server-side player handle.	
+		for (byte i =0; i<4;i++)
+		{
+			//Two is reserved only to be made by server
+			if (i!=2)
+			{
+				Request request = null;
+				if (i==0)
+				{
+					//we have to add some arguments because we are requesting card names
+			        for (Card.Name name : Card.Name.values())
+			        {
+			        	request = new Request(i,name);
+			        	Packet p = new Packet();
+			        	p.setRequest(request);
+			            try {
+							messenger.sendPakcet(p);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						while(!handle.hasPacketReceived()){}
+						Packet r_packet = handle.getCurrentPacket();
+						
+			            
+			        }
+				}
+			}
+			
+		}
+		//queue.setPlayer(player);
+		//queue.generateRequest();
+		//queue.getRequest();
+	}
+}

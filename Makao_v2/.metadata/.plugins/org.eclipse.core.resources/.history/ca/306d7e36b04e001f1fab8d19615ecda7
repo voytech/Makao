@@ -1,0 +1,20 @@
+package gui;
+
+public class TableCardContainer extends CardNodeContainer{
+	 //private int lastCardPointer;
+	 private Board board = null;
+	 public TableCardContainer(Board board)
+	 {
+		 this.board = board;
+	 }
+	 public void pushCardNode(CardNode node)
+	 {
+		 super.pushCardNode(node);		 
+		 board.add(node);
+         //reorder(); 
+		 //node.addMouseListener(this);
+		// node.addMouseMotionListener(this);
+		 board.repaint();
+	 }
+
+}

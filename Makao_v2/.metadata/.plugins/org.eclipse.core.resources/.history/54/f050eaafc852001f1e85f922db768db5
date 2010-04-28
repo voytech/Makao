@@ -1,0 +1,104 @@
+package server;
+
+import shared.Card;
+import shared.CardStack;
+import shared.Request;
+
+public class RequestGenerator {
+    private CardStack stack = null;
+    private boolean requestReleased = false;
+	private Request lastGenerated = null;
+	private Card requestStarterCard = null;
+    public RequestGenerator(CardStack stack) {
+		this.stack = stack;
+	}
+
+	public Request prepareRequest(Request player_req) {
+		// TODO Auto-generated method stub
+		Request output = null;
+		Card[] array = stack.getArray();
+		Card top = array[array.length-1];	
+		if (player_req!=null)
+		{
+			if (player_req.getID() == Request.REQUEST_TAKE)
+			{
+				if (requestStarterCard == null) output = new Request(Request.REQUEST_TAKE,new Integer(1));
+				else 
+				{
+					int number_c = 0;
+					if (requestStarterCard.getName().equals(Card.Name.TWO) || requestStarterCard.getName().equals(Card.Name.THREE))
+					{
+						for (int i=array.length-1;i>=0;i--)
+						{
+							Card c = array[i];
+							if (c.getName().equals(Card.Name.TWO)) number_c+=2;
+							else if (c.getName().equals(Card.Name.THREE)) number_c+=3;
+							if (c.equals(requestStarterCard)) break;
+						}
+						output = new Request(Request.REQUEST_TAKE,new Integer(number_c));
+					}
+					else
+						if (requestStarterCard.getName().equals(Card.Name.FOUR))
+						{
+							for (int i=array.length-1;i>=0;i--)
+							{
+								Card c = array[i];
+								if (c.getName().equals(Card.Name.FOUR)) number_c+=1;
+								if (c.equals(requestStarterCard)) break;
+							}
+							output = new Request(Request.REQUEST_WAITING,new Integer(number_c));
+						}
+				}
+			}
+			if (output!=null) {
+				lastGenerated =output;
+				return output;
+			}
+		}
+		if (lastGenerated!=null)
+		{
+			if (lastGenerated.getID() == Request.REQUEST_WAITING)
+			{
+			    requestReleased = true;
+			    requestStarterCard = null;
+			    lastGenerated = null;
+			}
+			else
+			if (lastGenerated.getID() == Request.REQUEST_TAKE)
+			{
+				Integer number = (Integer)lastGenerated.getArg();
+				if (number > 1) requestReleased = true;
+				lastGenerated = null;
+				requestStarterCard = null;
+			}
+		}
+		else requestReleased = false;
+		//Only if the player has consumed request the card on top has a special functionality. 
+		if (!requestReleased)
+		{
+			if (top.getName().equals(Card.Name.TWO) || top.getName().equals(Card.Name.THREE))
+			{
+				output = new Request(Request.REQUEST_CARD_NAME,new Card.Name[]{Card.Name.TWO,Card.Name.THREE});
+			}
+			if (top.getName().equals(Card.Name.FOUR))
+			{
+				output = new Request(Request.REQUEST_CARD_NAME,Card.Name.FOUR);
+			}
+			if (top.getName().equals(Card.Name.KING) && top.getSuit().equals(Card.Suit.SPADE))
+			{
+				output = new Request(Request.COMPOUND_REQUEST,new Request[]{new Request(Request.REQUEST_CARD_NAME,Card.Name.KING),
+																			new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART)});
+			}
+			if (top.getName().equals(Card.Name.KING) && top.getSuit().equals(Card.Suit.HEART))
+			{
+				output = new Request(Request.COMPOUND_REQUEST,new Request[]{new Request(Request.REQUEST_CARD_NAME,Card.Name.KING),
+																			new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE)});
+			}
+			requestStarterCard = top;
+		}
+		lastGenerated = output;
+		return output;
+	}
+
+}
+
