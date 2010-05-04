@@ -4,6 +4,14 @@ import java.io.Serializable;
 
 public class Packet implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7247532442113329344L;
+	/**
+	 * 
+	 */
+	
 	private String message = null;
 	private Card[] cards = null;
 	private Request request = null;

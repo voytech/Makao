@@ -1,6 +1,13 @@
 package shared;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2395473563743537699L;
 	public enum Name
 	{
 		TWO,

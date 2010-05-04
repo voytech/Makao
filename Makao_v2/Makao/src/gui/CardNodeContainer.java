@@ -34,6 +34,14 @@ public class CardNodeContainer extends JPanel{
     	CardNode cNode = new CardNode(card);
     	pushCardNode(cNode);
     }
+    public void pushCards(Card[] cards)
+    {
+    	for (Card card : cards)
+    	{
+    		CardNode cNode = new CardNode(card);
+    		pushCardNode(cNode);
+    	}
+    }
     public CardStack getCards()
     {
     	CardStack stack = new CardStack();    	

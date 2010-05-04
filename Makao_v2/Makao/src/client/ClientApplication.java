@@ -15,6 +15,8 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
@@ -64,10 +66,13 @@ public class ClientApplication extends JFrame {
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		 
 		 initializeBuffer();
          ClientApplication app = ClientApplication.getInstance();
          Container pane = app.getContentPane();
-         Board d =new Board();
+         
+         //app.setSi
+         Board d =new Board(app.getSize());
          
          d.setSize(500,500);
          //d.setSize(app.getSize());
