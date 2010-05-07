@@ -89,13 +89,21 @@ public class PlayerQueue implements Runnable
 		}
 	}
 
-	public PlayerHandle selectPlayer(int i) {
+	public PlayerHandle selectPlayer(int i) 
+	{
 		// TODO Auto-generated method stub
 		return players.get(i);
 	}
 
-	public PlayerHandle[] getPlayers() {
+	public PlayerHandle[] getPlayers() 
+	{
 		// TODO Auto-generated method stub
 		return players.toArray(new PlayerHandle[0]);
+	}
+
+	public void remove(int playerID) 
+	{
+		players.remove(playerID);
+		
 	}	
 }

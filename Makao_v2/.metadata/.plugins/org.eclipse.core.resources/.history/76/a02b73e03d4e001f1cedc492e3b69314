@@ -1,8 +1,0 @@
-package gui;
-
-import java.util.ArrayList;
-
-public class CardNodeContainer {
-    private ArrayList<CardNode> nodes = new ArrayList<CardNode>();
-    
-}

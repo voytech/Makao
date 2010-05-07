@@ -241,6 +241,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 								e.printStackTrace();
 							}
 							incoming = null;
+							//reorder();
 						}
 							//table.pushCardNodes(getAndRemoveSelectedNodes());
 					}
@@ -297,6 +298,8 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 			}
 			else performOnSingleRequest(request);
 		}
+		reorder();
+		this.repaint();
 			
 	}
 	private void performOnSingleRequest(Request request)
@@ -314,7 +317,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		{
 			Card[] cards = request.getCards();
 			this.pushCards(cards);
-			
+			//reorder();	
 		}
 		else
 			if (request.getID() == Request.REQUEST_CARDSTACK_ACTUALIZATION)
@@ -322,7 +325,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 				Card[] cards = request.getCards();
 				table.pushCards(cards);
 				removeCards(cards);
-				reorder();
+				//reorder();
 				//table.repaint();
 			}
 			else 
@@ -334,6 +337,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 					if (request.getID() == Request.REQUEST_DISABLE_PLAYER)
 					{
 						playerEnabled = false;
+						incoming = null;
 					}
 					else
 						if (request.getID() == Request.REQUEST_CARD_NAME || request.getID() == Request.REQUEST_CARD_SUIT)							

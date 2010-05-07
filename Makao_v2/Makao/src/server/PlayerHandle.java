@@ -4,21 +4,52 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import shared.Card;
 import shared.Messenger;
 import shared.Packet;
 import shared.PacketListener;
 
-public class PlayerHandle extends Messenger implements PacketListener{
+public class PlayerHandle extends Messenger implements PacketListener{	
+	private PlayerState state = null;
 	private Packet packet = null;
 	private boolean received = false;
 	private Hashtable<String,String> buffer = new Hashtable<String,String>();
 	private ArrayList<Packet> packetBuffer = new ArrayList<Packet>();
+	class PlayerState
+	{
+		private ArrayList<Card> pcards= new ArrayList<Card>();
+		private boolean active = false;
+		private int disabledRoundCount = 0; 
+		public void updateState(Card[] cards)
+		{
+			for (Card card : cards)
+			{
+				pcards.add(card);
+			}
+		}
+		public void updateState(int drc)
+		{
+			disabledRoundCount = drc;
+			active = false;
+		}
+		public void updateState(boolean active)
+		{
+			this.active = active;
+		}
+		public boolean isActive()          {return active;}
+		public Card[] getStackReference()  {return pcards.toArray(new Card[0]);}
+		public int getWaitingRoundsCount() {return disabledRoundCount;}
+	}
 	public PlayerHandle(Socket p_socket)
 	{
 		super(p_socket);
 		addPacketListener(this);
+		state = new PlayerState();
 	}
-
+    public PlayerState state()
+    {
+    	return state;
+    }
 	public boolean hasPacketReceived() {
 		return received;
 	}
