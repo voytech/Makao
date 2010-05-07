@@ -89,7 +89,12 @@ public class GameServer {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
+			}		
+			/*int player_cards_num = phandle.state().getStackReference().length;
+			if (player_cards_num == 0)
+			{
+				
+			}*/
 			//decreaseWaitingTours();
 			tours++;
 		}

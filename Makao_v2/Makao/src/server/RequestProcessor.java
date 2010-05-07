@@ -37,39 +37,21 @@ public class RequestProcessor {
 	}
     private void zerothRecentRequest() throws IOException
     {
-		if (lastGenerated!=null)
-		{
-			if (lastGenerated.getID() == Request.REQUEST_WAITING)
-			{
-			    requestReleased = true;
-			    requestStarterCard = null;
-			    lastGenerated = null;
-			}
-			else
-			if (lastGenerated.getID() == Request.REQUEST_TAKE)
-			{
-				Card[] number = lastGenerated.getCards();
-				if (/*number.length > 1 || */takeTimes == 2 )
-				{
-					//controlCentre.nextPlayerTurn();
-					logger.log(Level.INFO,"Disabling \"request raised\" state");
-					requestReleased = true;
-					lastGenerated = null;
-					requestStarterCard = null;
-					takeTimes = 0;		
-				}
-			}
-		}
-		else requestReleased = false;
-    	
-		if (takeTimes == 2)
+		if (requestStarterCard!=null)	
     	{
-    		logger.log(Level.INFO,"Disabling \"request raised\" state");
-			requestReleased = true;
-			lastGenerated = null;
-			requestStarterCard = null;
-			takeTimes = 0;
+				if (takeTimes==2)
+				{
+					takeTimes = 0;
+					requestReleased = true;
+					//lastGenerated = null;
+					requestStarterCard = null;
+				}					
     	}
+		else 
+			{
+				requestReleased = false;
+				if (takeTimes==2) takeTimes = 0;
+			}	
     }
 	public Request processRequest(Request player_req) throws IOException 
 	{
@@ -97,8 +79,6 @@ public class RequestProcessor {
 						packet.setRequest(output);						
 						controlCentre.nextPlayerTurn().sendPakcet(packet);						
 					}		
-			//lastGenerated = output;
-			//return output;
 		}
 		else requestFromTable();
 		lastGenerated = output;
@@ -110,6 +90,7 @@ public class RequestProcessor {
 		Packet packet = new Packet();
 		if (takeTimes==0)
 		{
+			//if (re)                          - last generated request must be passed again.
 			output = new Request(Request.REQUEST_TAKE,all.pop(1));
 			packet.setRequest(output);
 			controlCentre.getCurrentlyServed().sendPakcet(packet);
@@ -119,6 +100,7 @@ public class RequestProcessor {
 		if (takeTimes==1)
 		{					
 			int number_c = 0;
+			// sometimes should be not null but it is null indeed.
 			if (requestStarterCard!=null)
 			{
 				if (requestStarterCard.getName().equals(Card.Name.TWO) || requestStarterCard.getName().equals(Card.Name.THREE))
@@ -196,8 +178,7 @@ public class RequestProcessor {
          				   if (req.getID() == Request.REQUEST_CARD_NAME && req.getArg().equals(Card.Name.KING)) match++;
          				   if (req.getID() == Request.REQUEST_CARD_SUIT && req.getArg().equals(Card.Suit.SPADE)) match++;
          				   if (match==2)
-         				   {
-         				       //changing direction of game for a while
+         				   {         				    
          					   controlCentre.previousPlayerTurn().sendPakcet(packet);
          					   return;
          				   }         			   
