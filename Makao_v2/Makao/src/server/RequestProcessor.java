@@ -53,7 +53,7 @@ public class RequestProcessor {
 				if (takeTimes==2) takeTimes = 0;
 			}	
     }
-	public Request processRequest(Request player_req) throws IOException 
+	public void processRequest(Request player_req) throws IOException 
 	{
 		zerothRecentRequest();		
 		output = null;
@@ -82,7 +82,6 @@ public class RequestProcessor {
 		}
 		else requestFromTable();
 		lastGenerated = output;
-		return output;
 	}
 	
 	private void onTake() throws IOException
@@ -144,6 +143,7 @@ public class RequestProcessor {
 			
 			packet.setRequest(output);
 			controlCentre.sendPacketToCurrentlyServed(packet);
+			controlCentre.actualizePlayersStatuses();
 			controlCentre.nextPlayerTurn();
 			takeTimes = 2;										
 		}	

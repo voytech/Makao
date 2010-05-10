@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PlayerQueue implements Runnable 
+import shared.ReadErrorListener;
+
+public class PlayerQueue implements Runnable, ReadErrorListener 
 {
 	private Thread thread = null;
 	private ServerSocket server = null;
@@ -82,6 +84,7 @@ public class PlayerQueue implements Runnable
 				if (player_s!=null)
 				{
 					PlayerHandle player = new PlayerHandle(player_s);
+					player.addReadErrorListener(this);
 					players.add(player);
 					logger.log(Level.INFO, "new player joined, total players : "+players.size());
 				}
@@ -104,6 +107,22 @@ public class PlayerQueue implements Runnable
 	public void remove(int playerID) 
 	{
 		players.remove(playerID);
-		
+	}
+
+	@Override
+	public void readErrorOccured(Exception arg0,Object invoker) {
+		if (invoker instanceof PlayerHandle)
+		{
+			PlayerHandle handle = (PlayerHandle)invoker;
+			try {
+				handle.closeInput();
+				handle.closeOutput();
+				handle.getSocket().close();
+			} catch (IOException e) {
+				logger.log(Level.SEVERE, "Error while removing player handle");
+				e.printStackTrace();
+			}
+		}
+		players.remove(invoker);
 	}	
 }

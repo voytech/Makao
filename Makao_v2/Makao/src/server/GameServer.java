@@ -26,7 +26,6 @@ public class GameServer {
 	private ServerControl control = new ServerControl(); 
 	private RequestProcessor requester = new RequestProcessor(control);
 	private Logger logger = null;
-	//private Hashtable<PlayerHandle,Integer> waitings = new Hashtable<PlayerHandle,Integer>();
 	public GameServer(int port) 
 	{
 		logger = Logger.getLogger("server.GameServer");
@@ -70,66 +69,37 @@ public class GameServer {
 				e.printStackTrace();
 			}
 	    }
-		//stopped=false;
 		logger.log(Level.INFO,"Steady !!! Ready !!! GooOOooOOoOOOOooo !!! (Game started)");
 		int tours = 1;
-		//int players = queue.getPlayersCount();
-		//int i=0;
 		control.prepareGame();			
 		PlayerHandle phandle = null;
 		
 		while(true)
 		{
 			phandle = control.getCurrentlyServed();
-			//phandle.state().setActive(true);
 			Packet packet = this.waitForPacket(phandle);
 			shared.Request in = packet.getRequest();
-			shared.Request out = null;
 			try {
-				out = requester.processRequest(in);
+				requester.processRequest(in);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}		
-			/*int player_cards_num = phandle.state().getStackReference().length;
+			int player_cards_num = phandle.state().getStackReference().length;
 			if (player_cards_num == 0)
 			{
-				
-			}*/
-			//decreaseWaitingTours();
+				logger.log(Level.SEVERE, "GAME OVER... ");
+				break;
+			}
 			tours++;
 		}
 		
 	}
-   /* private void registerWaitingPlayer(PlayerHandle player,int rounds)
-    {
-       	if (waitings.containsKey(player))
-       	{
-       		waitings.remove(player);
-       	}
-       	waitings.put(player, rounds);		
-    }
-    private void decreaseWaitingTours()
-    {
-    	for (int i=0;i<queue.getPlayersCount();i++)
-    	{
-    		PlayerHandle ph = queue.selectPlayer(i);
-    		if (waitings.containsKey(ph))
-    		{
-    			int rounds = waitings.get(ph);
-    			rounds--;
-    			waitings.remove(ph);
-    			if (rounds>0) waitings.put(ph, rounds); 
-    		}	
-    	} 	
-    }
-    
-	
-    
+  
 	public void bye() 
 	{
 		// TODO Auto-generated method stub
 		
-	}*/
+	}
 
 }

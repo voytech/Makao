@@ -12,27 +12,18 @@ public class ServerStarter {
 	 */
 	private static GameServer server = null;
 	public static void main(String[] args) {
-		File f = new File("game-server-test.html");
+		File f = new File("game-server.html");
 		f.delete();
-		File f2 = new File("messenger-log.html");
-		f2.delete();
-		
-		FileLogHandler handler = null,handler2=null;
+		FileLogHandler handler = null;
 		try {
 			handler = new FileLogHandler();
-			handler.setFileName("game-server-test");
-			handler2 = new FileLogHandler();
-			handler2.setFileName("messenger-log");
+			handler.setFileName("game-server");
 		} catch (SecurityException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Logger sLogger = Logger.getLogger("players-queue");
-		Logger logger = Logger.getLogger("game-server");
-		Logger llogger = Logger.getLogger("shared.Messenger");
-		sLogger.addHandler(handler);
+		Logger logger = Logger.getLogger("server.GameServer");
 		logger.addHandler(handler);
-		llogger.addHandler(handler2);
 		server = new GameServer(9090);
 		server.run();
 	}
