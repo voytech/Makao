@@ -81,6 +81,7 @@ public class GameServer {
 		while(true)
 		{
 			phandle = control.getCurrentlyServed();
+			//phandle.state().setActive(true);
 			Packet packet = this.waitForPacket(phandle);
 			shared.Request in = packet.getRequest();
 			shared.Request out = null;

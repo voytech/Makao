@@ -24,6 +24,7 @@ import shared.Request;
 
 public class PlayerSpace extends CardNodeContainer implements MouseListener , MouseMotionListener, PacketListener
 {
+	 private ArrayList<OpponentPlayer> opponents = new ArrayList<OpponentPlayer>();
 	 private TableCardContainer table;
 	 private boolean dragging = false;
 	 private CardNode temporaryNode = null;
@@ -75,7 +76,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 	 {
 		 int x = 0;
 		 int width = this.getWidth();
-		 x = (width/2)-(((this.getComponentCount()-1)*cardOffset)/2);
+		 x = (width/2)+(((this.getComponentCount()-1)*cardOffset)/2);
 		 return x;
 	 }
 	 private int getStackMiddleY()
@@ -90,13 +91,14 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		 //int width = this.getWidth();
 		 int x = getStackRightX();
 		 int y = getStackMiddleY();
+		 
 		 for (int i=0;i<this.getComponentCount();i++)
 		 {
 			 if (this.getComponent(i) instanceof CardNode)
 			 {
 				 CardNode node = (CardNode)this.getComponent(i);
 				 if (node.isSelected())
-				 {
+				 {	 
 					 node.setLocation(new Point(x,y-20));				 
 				 }
 				 else node.setLocation(new Point(x,y));
@@ -109,9 +111,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 	 private void insertCardAt(int index,CardNode node)
 	 {
 		 remove(node);
-		 add(node,index);
-		 //nodes.add(index, node);
-		 //node.setLocation(this.x+(cardOffset*index),y+30);
+		 add(node,index);	 
 	 }
 	 private CardNode[] getSelectedNodes()
 	 {
@@ -304,20 +304,10 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 	}
 	private void performOnSingleRequest(Request request)
 	{
-		/*Packet p = new Packet();
-		p.setRequest(new Request(Request.REQUEST_CONSUMED));
-		try {
-			player.sendPakcet(p);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		//incoming = null;
 		if (request.getID() == Request.REQUEST_TAKE)
 		{
 			Card[] cards = request.getCards();
 			this.pushCards(cards);
-			//reorder();	
 		}
 		else
 			if (request.getID() == Request.REQUEST_CARDSTACK_ACTUALIZATION)
@@ -325,8 +315,6 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 				Card[] cards = request.getCards();
 				table.pushCards(cards);
 				removeCards(cards);
-				//reorder();
-				//table.repaint();
 			}
 			else 
 				if (request.getID() == Request.REQUEST_ENABLE_PLAYER)
@@ -344,6 +332,41 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 						{
 							incoming = request;
 						}
-		
+						else
+							if (request.getID() == Request.REQUEST_STRING_MESSAGE)
+							{
+								String messages = request.getMessage();
+								String[] message = messages.split("=");
+								if (message.length == 2)
+								{
+									if (message[0].equals("opponents_cards"))
+									{
+										String[] opp = message[1].split(";");
+										int x=10,y=200;
+										for (OpponentPlayer op : opponents) this.remove(op);
+										opponents.clear();
+										for (String opponent : opp)
+										{
+											if (!opponent.equals("") && opponent.contains(":"))
+											{
+												String[] key_val = opponent.split(":");
+												int opponent_id = Integer.valueOf(key_val[0]);
+												int cards_num = Integer.valueOf(key_val[1]);
+												OpponentPlayer o_player = null;
+												{		
+													o_player = new OpponentPlayer();
+													opponents.add(o_player);
+													this.add(o_player);
+												}	
+												o_player.setLocation(x,y);
+												o_player.setSize((cards_num*20)+100, 100);
+												o_player.setNumberOfCards(cards_num);
+												o_player.repaint();
+												y+=100;
+											}
+										}
+									}
+								}	
+							}	
 	}
 }

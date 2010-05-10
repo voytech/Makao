@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -8,6 +9,7 @@ import shared.Card;
 import shared.Messenger;
 import shared.Packet;
 import shared.PacketListener;
+import shared.Request;
 
 public class PlayerHandle extends Messenger implements PacketListener{	
 	private PlayerState state = null;
@@ -20,19 +22,34 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		private ArrayList<Card> pcards= new ArrayList<Card>();
 		private boolean active = false;
 		private int disabledRoundCount = 0; 
-		public void updateState(Card[] cards)
+		void addReferenceCards(Card[] cards)
 		{
 			for (Card card : cards)
 			{
 				pcards.add(card);
 			}
 		}
-		public void updateState(int drc)
+		void removeReferenceCards(Card[] cards)
+		{
+			ArrayList<Card> temp= new ArrayList<Card>();
+			for (Card card : cards)
+			{
+				for (Card inA : pcards)
+				{
+					if (card.getName().equals(inA.getName()) && card.getSuit().equals(inA.getSuit()))
+					{
+						temp.add(inA);
+					}
+				}
+			}
+			for (Card card : temp) pcards.remove(card);
+		}
+		public void updateWaitingRoundsState(int drc)
 		{
 			disabledRoundCount = drc;
 			active = false;
 		}
-		public void updateState(boolean active)
+		public void setActive(boolean active)
 		{
 			this.active = active;
 		}
@@ -45,6 +62,18 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		super(p_socket);
 		addPacketListener(this);
 		state = new PlayerState();
+	}
+	public void sendPakcet(Packet packet) throws IOException
+	{
+		super.sendPakcet(packet);
+		Request req = packet.getRequest();
+		if (req!=null)
+		{
+			if (req.getID() == Request.REQUEST_TAKE) state.addReferenceCards(req.getCards());
+			else  if (req.getID() == Request.REQUEST_WAITING) state.updateWaitingRoundsState(req.getNumber());
+			else if (req.getID() == Request.REQUEST_ENABLE_PLAYER) state.setActive(true);
+			else if (req.getID() == Request.REQUEST_DISABLE_PLAYER) state.setActive(false);
+		}	
 	}
     public PlayerState state()
     {
@@ -67,7 +96,7 @@ public class PlayerHandle extends Messenger implements PacketListener{
 	}
 
 	@Override
-	public void packetReceived(Packet packet) {
+	public void packetReceived(Packet packet) {	
 		String message= packet.getMessage();
 		if (message!=null)
 		{
@@ -79,9 +108,21 @@ public class PlayerHandle extends Messenger implements PacketListener{
 			    //return;	
 			}
 		}
-		this.received = true;
-		this.packet = packet;
-		packetBuffer.add(0,packet);	
-	
+		if (state.isActive())
+		{
+			Request req = packet.getRequest();
+			if (req!=null)
+			{
+				if (req.getID() == Request.REQUEST_PUSH)
+				{
+					Card[] cardsToPush  = req.getCards();
+					this.state.removeReferenceCards(cardsToPush);	
+				}
+			}
+			this.received = true;
+			this.packet = packet;
+			packetBuffer.add(0,packet);
+			
+		}	
 	}
 }

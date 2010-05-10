@@ -54,8 +54,7 @@ public class Board extends JPanel  implements HierarchyBoundsListener  {
     public  Board(Dimension size)
     {
        // this.setSize(size);	     
-    	this.setLayout(null);
-    
+    	this.setLayout(null); 
     	//this.addMouseListener(this);
         this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));       
         

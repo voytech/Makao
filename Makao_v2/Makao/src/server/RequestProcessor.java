@@ -90,10 +90,9 @@ public class RequestProcessor {
 		Packet packet = new Packet();
 		if (takeTimes==0)
 		{
-			//if (re)                          - last generated request must be passed again.
 			output = new Request(Request.REQUEST_TAKE,all.pop(1));
 			packet.setRequest(output);
-			controlCentre.getCurrentlyServed().sendPakcet(packet);
+			controlCentre.sendPacketToCurrentlyServed(packet);
 			takeTimes=1;
 		}
 		else
@@ -123,8 +122,6 @@ public class RequestProcessor {
 							if (c.getName().equals(Card.Name.FOUR)) number_c+=1;
 							if (c.equals(requestStarterCard)) break;
 						}
-						PlayerHandle.PlayerState state = controlCentre.getCurrentlyServed().state();
-						state.updateState(number_c);
 						output = new Request(Request.REQUEST_WAITING,number_c);							
 					}
 					else
@@ -146,9 +143,8 @@ public class RequestProcessor {
 			}
 			
 			packet.setRequest(output);
-			controlCentre.getCurrentlyServed().sendPakcet(packet);
+			controlCentre.sendPacketToCurrentlyServed(packet);
 			controlCentre.nextPlayerTurn();
-			//postRequestEvent(Request.PostEvents.NextPlayer);
 			takeTimes = 2;										
 		}	
 	}
@@ -167,6 +163,7 @@ public class RequestProcessor {
          	   output = requestFromTable();
          	   Packet packet = new Packet();
          	   packet.setRequest(output);
+         	   controlCentre.actualizePlayersStatuses();
          	   if (output!=null)
          	   {
          		   if (output.getID() == Request.COMPOUND_REQUEST)
@@ -186,7 +183,6 @@ public class RequestProcessor {
          		   }
          	   }
          	   controlCentre.nextPlayerTurn().sendPakcet(packet);
-         	   //logger.log(Level.INFO,"Stack actualization succeeded... (player - "+this.currentlyServedID+")");
         }
         else 
         {

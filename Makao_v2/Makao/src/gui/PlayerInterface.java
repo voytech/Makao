@@ -1,8 +1,14 @@
 package gui;
 
+import gui.Buttons.PassButton;
+import gui.Buttons.ReadyButton;
+import gui.Buttons.TakeButton;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -24,6 +30,9 @@ import client.Player;
 
 public class PlayerInterface extends JPanel implements ActionListener, PacketListener{
 	private JButton takeCard,putCard,requestSuit,requestName,connect,ready;
+	private TakeButton takeButton = new TakeButton();
+	private ReadyButton readyButton = new ReadyButton();
+	private PassButton passButton = new PassButton();
 	private JLabel tourIndicator;
 	private Messenger player = null;
 	public PlayerInterface(Messenger player)
@@ -54,12 +63,20 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		requestName.setLocation(20, 100);
 		requestName.setSize(150, 30);
 		
+		passButton.setLocation(160,50);
+		passButton.setSize(150,70);	
+		takeButton.setLocation(10,50);
+		takeButton.setSize(150,70);
+		readyButton.setLocation(10,10);
+		readyButton.setSize(120,40);
+		
+		
 		connect.setLocation(180, 10);
 		connect.setSize(150, 30);
 		ready.setLocation(180, 40);
 		ready.setSize(150, 30);
 		tourIndicator.setLocation(180, 75);
-		tourIndicator.setSize(150, 50);
+		tourIndicator.setSize(150, 70);
 		tourIndicator.setFont(new Font(Font.SANS_SERIF,Font.BOLD,18));
 		this.add(takeCard);
 		this.add(putCard);
@@ -68,10 +85,20 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		this.add(connect);
 		this.add(ready);
 		this.add(tourIndicator);
+		//this.add(takeButton);
+		//this.add(readyButton);
+		//this.add(passButton);
 	}
 	public void paintComponent(Graphics g)
 	{
-		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D)g;
+		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		//super.paintComponent(g);
+		//g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		//g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		
+		
 	}
 	@Override
 	public void actionPerformed(ActionEvent a) {

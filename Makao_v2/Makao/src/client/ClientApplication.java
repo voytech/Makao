@@ -62,7 +62,11 @@ public class ClientApplication extends JFrame {
 				ImagesBuffer.getInstance().addEntry(name, "cards"+File.separator+temp.getName());
 			}
 		}	
-		ImagesBuffer.getInstance().addEntry("table", "images"+File.separator+"tableUpdated.jpg");
+		ImagesBuffer.getInstance().addEntry("cardBack", "cards"+File.separator+"b2fv.gif");
+		ImagesBuffer.getInstance().addEntry("table", "images"+File.separator+"table2.jpg");
+		ImagesBuffer.getInstance().addEntry("takeButton", "images"+File.separator+"takeButton.gif");
+		ImagesBuffer.getInstance().addEntry("readyButton", "images"+File.separator+"readyButton.gif");
+		ImagesBuffer.getInstance().addEntry("passButton", "images"+File.separator+"passButton.gif");
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

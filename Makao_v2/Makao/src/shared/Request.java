@@ -10,7 +10,7 @@ public class Request implements Serializable{
 	/**
 	 * 
 	 */
-	public static final byte REQUEST_CARD_NAME = 0;
+	 public static final byte REQUEST_CARD_NAME = 0;
 	 public static final byte REQUEST_CARD_SUIT = 1;
 	 public static final byte REQUEST_WAITING = 2;
 	 public static final byte REQUEST_TAKE = 3; 	 
@@ -22,9 +22,11 @@ public class Request implements Serializable{
 	 public static final byte REQUEST_SHOW_YOURSELF = 9;
 	 public static final byte REQUEST_PUSH = 10;
 	 public static final byte REQUEST_CONSUMED = 11;
+	 public static final byte REQUEST_STRING_MESSAGE = 12;
 	 private byte request;
 	 private Object arg = null;
 	 private Card[] cards = null;
+	 private String r_message = "";
 	 private int number = 0;
 	 private Request[] compound = null;
      public Request(byte request, Object arg) 
@@ -51,6 +53,13 @@ public class Request implements Serializable{
     	 this.request = request;
     	 this.compound = compound;
      }
+     public Request(byte request,String message) 
+     {
+		// TODO Auto-generated constructor stub
+    	 this.request = request;
+    	 this.r_message = message;
+    	
+     }
      public Request(byte request) 
      {
 		// TODO Auto-generated constructor stub
@@ -76,6 +85,10 @@ public class Request implements Serializable{
 	public Request[] getCompound()
 	{
 		return compound;
+	}
+	public String getMessage()
+	{
+		return r_message;
 	}
 
 	

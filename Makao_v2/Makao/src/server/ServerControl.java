@@ -66,16 +66,42 @@ public class ServerControl {
 	{
 		for (int i=0;i<queue.getPlayersCount();i++)
 		{
-				PlayerHandle player = queue.selectPlayer(i);
-				Packet packet = new Packet();
-				packet.setRequest(new shared.Request(shared.Request.REQUEST_CARDSTACK_ACTUALIZATION,toActualize));
+			PlayerHandle player = queue.selectPlayer(i);
+			Packet packet = new Packet();
+			packet.setRequest(new shared.Request(shared.Request.REQUEST_CARDSTACK_ACTUALIZATION,toActualize));
+			player.sendPakcet(packet);
+		}
+	}
+	public void actualizePlayersStatuses() throws IOException
+	{
+		for (int i=0;i<queue.getPlayersCount();i++)
+		{
+			PlayerHandle player = queue.selectPlayer(i);
+			if (!player.equals(currentlyServed))
+			{
+				String status = "opponents_cards=";
+				Packet packet = new Packet();	
+				for (int j=0;j<queue.getPlayersCount();j++)
+				{
+					if (i!=j)
+					{
+						int count = queue.selectPlayer(j).state().getStackReference().length;
+						status+=(j+":"+count+";");
+					}
+				}
+				packet.setRequest(new shared.Request(shared.Request.REQUEST_STRING_MESSAGE,status));
 				player.sendPakcet(packet);
+			}
 		}
 	}
 	public int restoreRoundPoint()
 	{
 		playerID = roundPoint;
 		return playerID;	
+	}
+	public void sendPacketToCurrentlyServed(Packet packet) throws IOException
+	{
+		currentlyServed.sendPakcet(packet);	
 	}
 	public PlayerHandle previousPlayerTurn() throws IOException
 	{		
@@ -91,14 +117,22 @@ public class ServerControl {
 				if (waitings > 0)
 				{
 					//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
-					player.state().updateState(--waitings);
-					getNextPlayerID();
+					player.state().updateWaitingRoundsState(--waitings);
+					getPreviousPlayerID();
 					i=0;
 					continue;
 				}				
-				else packet.setRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+				else 
+					{
+						packet.setRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+						//player.state().setActive(true);
+					}
 			}
-			else packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+			else 
+				{
+					packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+					//player.state().setActive(false);
+				}
 			player.sendPakcet(packet);
 			i++;
 		}	
@@ -119,14 +153,22 @@ public class ServerControl {
 				if (waitings > 0)
 				{
 					//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
-					player.state().updateState(--waitings);
+					player.state().updateWaitingRoundsState(--waitings);
 					getNextPlayerID();
 					i=0; 
 					continue;
 				}				
-				else packet.setRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+				else 
+					{
+						packet.setRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+						//player.state().setActive(true);
+					}
 			}
-			else packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+			else 
+				{
+					packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+					//player.state().setActive(false);
+				}
 			player.sendPakcet(packet);
 			i++;
 		}	
@@ -168,9 +210,14 @@ public class ServerControl {
 				Packet p = new Packet();
 				if (playerNum==0)
 				{
-					p.setRequest(new shared.Request(Request.REQUEST_ENABLE_PLAYER));				
+					p.setRequest(new shared.Request(Request.REQUEST_ENABLE_PLAYER));
+					handle.state().setActive(true);
 				}
-				else p.setRequest(new shared.Request(Request.REQUEST_DISABLE_PLAYER));
+				else 
+					{
+						p.setRequest(new shared.Request(Request.REQUEST_DISABLE_PLAYER));
+						handle.state().setActive(false);
+					}
 				handle.sendPakcet(p);
 				logger.log(Level.INFO,"Starter cards sent to player ("+playerNum+")");
 			} catch (IOException e) {
@@ -180,6 +227,12 @@ public class ServerControl {
 			}
     		playerNum++;
     	}
+    	try {
+			this.actualizePlayersStatuses();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	return true;
     }
 }
