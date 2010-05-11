@@ -18,6 +18,7 @@ public class ServerControl {
     private CardStackGuard guard = new CardStackGuard(table);
     private PlayerQueue queue = null;
     private PlayerHandle currentlyServed = null;
+    private PlayerHandle markedPlayer = null;
     private int playerID = 0; 
     private int roundPoint = 0;
     private Logger logger = Logger.getLogger("server.GameServer");
@@ -28,6 +29,18 @@ public class ServerControl {
     public DeckOfCards getDeck()
     {
     	return all;
+    }
+    public void markCurrentPlayer()
+    {
+    	markedPlayer = this.currentlyServed;
+    }
+    public boolean isRoundCompleted()
+    {
+       return (markedPlayer == this.currentlyServed);	
+    }
+    public void unmark()
+    {
+    	markedPlayer = null;
     }
     public PlayerHandle getCurrentlyServed()
     {
@@ -188,6 +201,7 @@ public class ServerControl {
     		player.sendPakcet(packet);
     	}
     }
+    //To correct
     public void rejectPlayer()
     {
     	PlayerHandle handle   = queue.selectPlayer(playerID);

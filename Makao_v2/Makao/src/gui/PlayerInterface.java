@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,7 +40,7 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 	private JLabel tourIndicator;
 	private JComboBox rSuit=null,rName=null;
 	private Messenger player = null;
-	private Request request = null;
+	ButtonGroup bgroup = null;
 	public PlayerInterface(Messenger player)
 	{
 		this.setLayout(null);
@@ -82,7 +83,9 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		readyButton.setLocation(10,10);
 		readyButton.setSize(120,40);
 		
-		
+		bgroup = new ButtonGroup();
+		bgroup.add(requestName);
+		bgroup.add(requestSuit);
 		makao.setLocation(180, 10);
 		makao.setSize(150, 30);
 		ready.setLocation(180, 40);
@@ -97,6 +100,7 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		this.add(putCard);
 		this.add(requestSuit);
 		this.add(requestName);
+
 		this.add(makao);
 		this.add(ready);
 		this.add(tourIndicator);
@@ -168,38 +172,6 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 						e.printStackTrace();
 					}
 				}
-				else 
-					if (source.equals(requestSuit))
-					{
-						String suit = (String)rSuit.getSelectedItem();
-						if (suit.equals("Clubs")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
-						else 
-							if (suit.equals("Diamonds")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.DIAMOND);	
-							else 
-								if (suit.equals("Spades")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE);							
-								else 
-									if (suit.equals("Hearts")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART);									 						
-					}
-					else 
-						if (source.equals(requestName))
-						{
-							String name = (String)rSuit.getSelectedItem();
-							if (name.equals("5")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.FIVE);
-							else 
-								if (name.equals("6")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SIX);	
-								else 
-									if (name.equals("7")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SEVEN);							
-									else 
-										if (name.equals("8")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.EIGHT);
-										else
-											if (name.equals("9")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.NINE);
-											else
-												if (name.equals("10")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.TEN);
-												else
-													if (name.equals("Jack")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.JACK);
-													else
-														if (name.equals("Queen")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.QUEEN);
-						}		
 	}
 	@Override
 	public void packetReceived(Packet packet) {
@@ -220,17 +192,17 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 	}
 	private void performOnSingleRequest(Request request)
 	{
-		if (request.getID() == request.REQUEST_ENABLE_PLAYER)
+		if (request.getID() == Request.REQUEST_ENABLE_PLAYER)
 		{
 			tourIndicator.setText("Your turn");
 		}
 		else
-			if (request.getID() == request.REQUEST_DISABLE_PLAYER)
+			if (request.getID() == Request.REQUEST_DISABLE_PLAYER)
 			{
 				tourIndicator.setText("Not Your turn");
 			}
 			else
-				if (request.getID() == request.REQUEST_WINNER)
+				if (request.getID() == Request.REQUEST_WINNER)
 				{
 					String mess = request.getMessage();
 					tourIndicator.setText(mess);
@@ -239,10 +211,39 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 	}
 	public Request getSelectedRequest()
 	{
+		Request request = null;
+		if (requestSuit.isSelected())
+		{
+			String suit = (String)rSuit.getSelectedItem();
+			if (suit.equals("Clubs")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
+			else 
+				if (suit.equals("Diamonds")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.DIAMOND);	
+				else 
+					if (suit.equals("Spades")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE);							
+					else 
+						if (suit.equals("Hearts")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART);
+		}
+		else 
+			if (requestName.isSelected())
+			{
+				String name = (String)rSuit.getSelectedItem();
+				if (name.equals("5")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.FIVE);
+				else 
+					if (name.equals("6")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SIX);	
+					else 
+						if (name.equals("7")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SEVEN);							
+						else 
+							if (name.equals("8")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.EIGHT);
+							else
+								if (name.equals("9")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.NINE);
+								else
+									if (name.equals("10")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.TEN);
+									else
+										if (name.equals("Jack")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.JACK);
+										else
+											if (name.equals("Queen")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.QUEEN);
+			}
+		bgroup.clearSelection();	
 		return request;
-	}
-	public void clearSelectedRequest() 
-	{
-		request = null;		
 	}
 }

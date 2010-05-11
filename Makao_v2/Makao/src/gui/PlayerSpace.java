@@ -241,10 +241,17 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 							Request outReq = null;
 							if (selectedReq!=null) 
 							{
-								outReq = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{new Request(Request.REQUEST_PUSH,scards),selectedReq});
-								pi.clearSelectedRequest();
+								if (guard.setOutgoingRequest(selectedReq))
+								{
+								   outReq = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{new Request(Request.REQUEST_PUSH,scards),selectedReq});
+								   incoming = null;
+								}
 							}
-							else outReq = new Request(Request.REQUEST_PUSH,scards);
+							else
+								{
+									outReq = new Request(Request.REQUEST_PUSH,scards);
+									incoming = null;
+								}
 							packet.setRequest(outReq);
 							try {
 							   player.sendPakcet(packet);
@@ -252,7 +259,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 								//JOptionPane.showM// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							incoming = null;
+							
 						}							
 					}
 				}

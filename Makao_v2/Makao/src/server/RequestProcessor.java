@@ -69,7 +69,7 @@ public class RequestProcessor {
 		    	{
 		    		if ((requestBuffer.getID() == Request.REQUEST_CARD_NAME) || (requestBuffer.getID() == Request.REQUEST_CARD_SUIT))
 		    		{
-		    			if (!controlCentre.getCurrentlyServed().equals(this.requestInvoker))
+		    			if (!controlCentre.isRoundCompleted())
 		    			{
 		    				Request comp = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{player_req,requestBuffer});
 		    				this.onPushWithRequest(comp);
@@ -194,10 +194,12 @@ public class RequestProcessor {
 			Request req  = reqs[1];
 			if ((req.getID() == Request.REQUEST_CARD_NAME) || (req.getID() == Request.REQUEST_CARD_SUIT))
 			{
+				boolean goForward = true;
 		        Card[] cards = push.getCards();
-		        guard.setSelection(cards);
-		        //guard.setIncomingRequest(req);//?
-		        if (guard.testSelection())
+		        guard.setSelection(cards);		        
+		        if (this.requestBuffer!=null) guard.setIncomingRequest(req);//?
+		        else  goForward = guard.setOutgoingRequest(req);       	
+		        if (guard.testSelection() && goForward)
 		        {
 		        	   takeTimes=0;        	   
 		        	   stack.push(cards);
@@ -207,11 +209,12 @@ public class RequestProcessor {
 		         	   controlCentre.actualizePlayersStatuses(); 
 		         	   this.requestBuffer = req;
 		         	   this.requestInvoker = controlCentre.getCurrentlyServed();
+		         	   if (this.requestBuffer == null) controlCentre.markCurrentPlayer();
 		         	   controlCentre.nextPlayerTurn().sendPakcet(packet);		         	    
 		        }
 		        else 
 		        {
-		        	controlCentre.rejectPlayer();
+		        	controlCentre.rejectPlayer(); //This doesn't work correctly
 		        }
 		        guard.setIncomingRequest(null);
 		        guard.setSelection(null); //guard.
