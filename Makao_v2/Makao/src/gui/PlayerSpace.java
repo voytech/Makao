@@ -192,7 +192,6 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		CardNode[] tNodes = getSelectedNodes();
 		for (CardNode n : tNodes) n.setSelected(false);
 		}
-		//board.repaint();
 	}
 
 	@Override
@@ -328,7 +327,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 						incoming = null;
 					}
 					else
-						if (request.getID() == Request.REQUEST_CARD_NAME || request.getID() == Request.REQUEST_CARD_SUIT)							
+						if (request.getID() == Request.REQUEST_CARD_NAME || request.getID() == Request.REQUEST_CARD_SUIT || request.getID() == Request.REQUEST_CARD_NAMES)							
 						{
 							incoming = request;
 						}

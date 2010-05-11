@@ -23,6 +23,9 @@ public class Request implements Serializable{
 	 public static final byte REQUEST_PUSH = 10;
 	 public static final byte REQUEST_CONSUMED = 11;
 	 public static final byte REQUEST_STRING_MESSAGE = 12;
+	 public static final byte REQUEST_MAKAO = 13;
+	 public static final byte REQUEST_CARD_NAMES = 14;
+	 public static final byte REQUEST_WINNER = 15;
 	 private byte request;
 	 private Object arg = null;
 	 private Card[] cards = null;

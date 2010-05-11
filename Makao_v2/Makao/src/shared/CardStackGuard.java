@@ -74,13 +74,24 @@ public class CardStackGuard {
 		  {			  
 			  Card.Name name = (Card.Name)incRequest.getArg();			  
 			  return ( bottomCard.getName().equals(name) );			  			    	
-		  }
-		  else 
-			  if ( incRequest.getID() == Request.REQUEST_CARD_SUIT )
-			  {
-				  Card.Suit suit = (Card.Suit)incRequest.getArg();
-				  return ( bottomCard.getSuit().equals(suit) ); 				   				
-			  }		  	 	
+		  }		 
+		  else
+			  if ( incRequest.getID() == Request.REQUEST_CARD_NAMES )
+			  {			  
+				  Card.Name[] names = (Card.Name[])incRequest.getArg();			  
+				  boolean ret = false;
+				  for (Card.Name name : names)
+				  {
+					 if (bottomCard.getName().equals(name)) ret = true;	
+				  }
+				  return ret;			  			    	
+			  }
+			  else 
+				  if ( incRequest.getID() == Request.REQUEST_CARD_SUIT )
+				  {
+					  Card.Suit suit = (Card.Suit)incRequest.getArg();
+					  return ( bottomCard.getSuit().equals(suit) ); 				   				
+				  }		  	 	
 	  }
 	  if ((topStack != null) && (bottomCard!=null)) return ((topStack.getName() == bottomCard.getName()) || (topStack.getSuit() == bottomCard.getSuit()));
 	  return true;

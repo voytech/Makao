@@ -76,19 +76,29 @@ public class GameServer {
 		
 		while(true)
 		{
+			logger.log(Level.INFO,"------------------------");
+			logger.log(Level.WARNING,"Starting tour :"+tours);
+			logger.log(Level.INFO,"------------------------");
 			phandle = control.getCurrentlyServed();
 			Packet packet = this.waitForPacket(phandle);
 			shared.Request in = packet.getRequest();
 			try {
 				requester.processRequest(in);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.log(Level.SEVERE,"Fatal error occured while processing request"+e.getLocalizedMessage());e.printStackTrace();
 			}		
-			int player_cards_num = phandle.state().getStackReference().length;
+			int player_cards_num = phandle.getStackReference().length;
 			if (player_cards_num == 0)
 			{
+				logger.log(Level.INFO,"----------------");
 				logger.log(Level.SEVERE, "GAME OVER... ");
+				logger.log(Level.INFO,"----------------");
+				try {
+					control.announceWinner();
+				} catch (IOException e) {
+					logger.log(Level.SEVERE,"Fatal error occured while announcing winner"+e.getLocalizedMessage());
+					e.printStackTrace();
+				}
 				break;
 			}
 			tours++;

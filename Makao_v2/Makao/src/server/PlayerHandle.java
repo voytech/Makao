@@ -13,56 +13,19 @@ import shared.ReadErrorListener;
 import shared.Request;
 
 public class PlayerHandle extends Messenger implements PacketListener{	
-	private PlayerState state = null;
 	private Packet packet = null;
 	private boolean received = false;
 	private Hashtable<String,String> buffer = new Hashtable<String,String>();
 	private ArrayList<Packet> packetBuffer = new ArrayList<Packet>();
-	class PlayerState
-	{
-		private ArrayList<Card> pcards= new ArrayList<Card>();
-		private boolean active = false;
-		private int disabledRoundCount = 0; 
-		void addReferenceCards(Card[] cards)
-		{
-			for (Card card : cards)
-			{
-				pcards.add(card);
-			}
-		}
-		void removeReferenceCards(Card[] cards)
-		{
-			ArrayList<Card> temp= new ArrayList<Card>();
-			for (Card card : cards)
-			{
-				for (Card inA : pcards)
-				{
-					if (card.getName().equals(inA.getName()) && card.getSuit().equals(inA.getSuit()))
-					{
-						temp.add(inA);
-					}
-				}
-			}
-			for (Card card : temp) pcards.remove(card);
-		}
-		public void updateWaitingRoundsState(int drc)
-		{
-			disabledRoundCount = drc;
-			active = false;
-		}
-		public void setActive(boolean active)
-		{
-			this.active = active;
-		}
-		public boolean isActive()          {return active;}
-		public Card[] getStackReference()  {return pcards.toArray(new Card[0]);}
-		public int getWaitingRoundsCount() {return disabledRoundCount;}
-	}
+	
+	private ArrayList<Card> pcards= new ArrayList<Card>();
+	private boolean active = false;
+	private int disabledRoundCount = 0; 
+		
 	public PlayerHandle(Socket p_socket)
 	{
 		super(p_socket);
 		addPacketListener(this);
-		state = new PlayerState();
 	}
 	public void sendPakcet(Packet packet) throws IOException
 	{
@@ -70,16 +33,13 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		Request req = packet.getRequest();
 		if (req!=null)
 		{
-			if (req.getID() == Request.REQUEST_TAKE) state.addReferenceCards(req.getCards());
-			else  if (req.getID() == Request.REQUEST_WAITING) state.updateWaitingRoundsState(req.getNumber());
-			else if (req.getID() == Request.REQUEST_ENABLE_PLAYER) state.setActive(true);
-			else if (req.getID() == Request.REQUEST_DISABLE_PLAYER) state.setActive(false);
+			if (req.getID() == Request.REQUEST_TAKE) addReferenceCards(req.getCards());
+			else  if (req.getID() == Request.REQUEST_WAITING) updateWaitingRoundsState(req.getNumber());
+			else if (req.getID() == Request.REQUEST_ENABLE_PLAYER) setActive(true);
+			else if (req.getID() == Request.REQUEST_DISABLE_PLAYER) setActive(false);
 		}	
 	}
-    public PlayerState state()
-    {
-    	return state;
-    }
+
 	public boolean hasPacketReceived() {
 		return received;
 	}
@@ -95,7 +55,40 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		if (buffer.containsKey(key)) return buffer.get(key);
 		return "";
 	}
-
+	private void addReferenceCards(Card[] cards)
+	{
+		for (Card card : cards)
+		{
+			pcards.add(card);
+		}
+	}
+	private void removeReferenceCards(Card[] cards)
+	{
+		ArrayList<Card> temp= new ArrayList<Card>();
+		for (Card card : cards)
+		{
+			for (Card inA : pcards)
+			{
+				if (card.getName().equals(inA.getName()) && card.getSuit().equals(inA.getSuit()))
+				{
+					temp.add(inA);
+				}
+			}
+		}
+		for (Card card : temp) pcards.remove(card);
+	}
+	public void updateWaitingRoundsState(int drc)
+	{
+		disabledRoundCount = drc;
+		active = false;
+	}
+	private void setActive(boolean active)
+	{
+		this.active = active;
+	}
+	public boolean isActive()          {return active;}
+	public Card[] getStackReference()  {return pcards.toArray(new Card[0]);}
+	public int getWaitingRoundsCount() {return disabledRoundCount;}
 	@Override
 	public void packetReceived(Packet packet) {	
 		String message= packet.getMessage();
@@ -109,7 +102,7 @@ public class PlayerHandle extends Messenger implements PacketListener{
 			    //return;	
 			}
 		}
-		if (state.isActive())
+		if (isActive())
 		{
 			Request req = packet.getRequest();
 			if (req!=null)
@@ -117,7 +110,7 @@ public class PlayerHandle extends Messenger implements PacketListener{
 				if (req.getID() == Request.REQUEST_PUSH)
 				{
 					Card[] cardsToPush  = req.getCards();
-					this.state.removeReferenceCards(cardsToPush);	
+					removeReferenceCards(cardsToPush);	
 				}
 			}
 			this.received = true;

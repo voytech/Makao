@@ -199,7 +199,7 @@ public class RequestProcessor {
 		{
 			if (top.getName().equals(Card.Name.TWO) || top.getName().equals(Card.Name.THREE))
 			{
-				output = new Request(Request.REQUEST_CARD_NAME,Card.Name.TWO);
+				output = new Request(Request.REQUEST_CARD_NAMES,new Card.Name[]{Card.Name.TWO,Card.Name.THREE});
 				if (requestStarterCard == null) requestStarterCard = top;
 			}
 			if (top.getName().equals(Card.Name.FOUR))

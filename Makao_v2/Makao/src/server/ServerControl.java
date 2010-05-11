@@ -85,7 +85,7 @@ public class ServerControl {
 				{
 					if (i!=j)
 					{
-						int count = queue.selectPlayer(j).state().getStackReference().length;
+						int count = queue.selectPlayer(j).getStackReference().length;
 						status+=(j+":"+count+";");
 					}
 				}
@@ -113,11 +113,11 @@ public class ServerControl {
 			Packet packet = new Packet();
 			if (i==playerID) 
 			{
-				int waitings = player.state().getWaitingRoundsCount();
+				int waitings = player.getWaitingRoundsCount();
 				if (waitings > 0)
 				{
 					//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
-					player.state().updateWaitingRoundsState(--waitings);
+					player.updateWaitingRoundsState(--waitings);
 					getPreviousPlayerID();
 					i=0;
 					continue;
@@ -149,11 +149,11 @@ public class ServerControl {
 			Packet packet = new Packet();
 			if (i==playerID) 
 			{
-				int waitings = player.state().getWaitingRoundsCount();
+				int waitings = player.getWaitingRoundsCount();
 				if (waitings > 0)
 				{
 					//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
-					player.state().updateWaitingRoundsState(--waitings);
+					player.updateWaitingRoundsState(--waitings);
 					getNextPlayerID();
 					i=0; 
 					continue;
@@ -178,7 +178,7 @@ public class ServerControl {
     public void rejectPlayer()
     {
     	PlayerHandle handle   = queue.selectPlayer(playerID);
-    	Card[] cardsToRestore = handle.state().getStackReference();
+    	Card[] cardsToRestore = handle.getStackReference();
     	queue.remove(playerID);
     	all.push(cardsToRestore);
     	all.shuffle();
@@ -211,12 +211,12 @@ public class ServerControl {
 				if (playerNum==0)
 				{
 					p.setRequest(new shared.Request(Request.REQUEST_ENABLE_PLAYER));
-					handle.state().setActive(true);
+					//handle..setActive(true);
 				}
 				else 
 					{
 						p.setRequest(new shared.Request(Request.REQUEST_DISABLE_PLAYER));
-						handle.state().setActive(false);
+						//handle.state().setActive(false);
 					}
 				handle.sendPakcet(p);
 				logger.log(Level.INFO,"Starter cards sent to player ("+playerNum+")");
@@ -234,5 +234,26 @@ public class ServerControl {
 			e.printStackTrace();
 		}
     	return true;
+    }
+    public void announceWinner() throws IOException
+    {
+    	PlayerHandle winner = null;
+    	for (PlayerHandle player : queue.getPlayers())
+    	{
+    		Card[] sRef = player.getStackReference();
+    		if (sRef.length == 0) {winner = player; break;}
+    	}
+    	if (winner!=null)
+    	{
+    		for (PlayerHandle player : queue.getPlayers())
+    		{
+    			Packet packet = new Packet();
+    			Request req = null;
+    			if (player.equals(winner)) req = new Request(Request.REQUEST_WINNER,"You are WINNER !!!");	
+    			else req =new Request(Request.REQUEST_WINNER,"You have FAILED :("); 
+    			packet.setRequest(req);
+    			player.sendPakcet(packet);	
+    		}
+    	}
     }
 }

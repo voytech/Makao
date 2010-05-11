@@ -89,7 +89,7 @@ public class Board extends JPanel  implements HierarchyBoundsListener  {
         this.add(playerCards);
         PlayerInterface pi =new PlayerInterface(player);
         pi.setLocation(10,10);
-        pi.setSize(350,140);
+        pi.setSize(500,140);
         this.add(pi,0);
        // this.add(tableCards);
 

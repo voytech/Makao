@@ -29,7 +29,7 @@ import shared.Request;
 import client.Player;
 
 public class PlayerInterface extends JPanel implements ActionListener, PacketListener{
-	private JButton takeCard,putCard,requestSuit,requestName,connect,ready;
+	private JButton takeCard,putCard,requestSuit,requestName,makao,ready;
 	private TakeButton takeButton = new TakeButton();
 	private ReadyButton readyButton = new ReadyButton();
 	private PassButton passButton = new PassButton();
@@ -49,8 +49,8 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		requestSuit.addActionListener(this);
 		requestName = new JButton("Request name");
 		requestName.addActionListener(this);
-		connect = new JButton("Connect");
-		connect.addActionListener(this);
+		makao = new JButton("Makao");
+		makao.addActionListener(this);
 		ready = new JButton("Ready !!!");
 		ready.addActionListener(this);
 		tourIndicator = new JLabel("It is");
@@ -71,18 +71,21 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		readyButton.setSize(120,40);
 		
 		
-		connect.setLocation(180, 10);
-		connect.setSize(150, 30);
+		makao.setLocation(180, 10);
+		makao.setSize(150, 30);
 		ready.setLocation(180, 40);
 		ready.setSize(150, 30);
 		tourIndicator.setLocation(180, 75);
-		tourIndicator.setSize(150, 70);
-		tourIndicator.setFont(new Font(Font.SANS_SERIF,Font.BOLD,18));
+		tourIndicator.setSize(300, 70);
+		Font f = new Font(Font.SANS_SERIF,Font.BOLD,18);
+		tourIndicator.setFont(f);
+		tourIndicator.setForeground(Color.WHITE);
+		
 		this.add(takeCard);
 		this.add(putCard);
 		this.add(requestSuit);
 		this.add(requestName);
-		this.add(connect);
+		this.add(makao);
 		this.add(ready);
 		this.add(tourIndicator);
 		//this.add(takeButton);
@@ -104,8 +107,17 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 	public void actionPerformed(ActionEvent a) {
 		// TODO Auto-generated method stub
 		Object source = a.getSource();
-		if (source.equals(connect))
+		if (source.equals(makao))
 		{
+			Request req = new Request(Request.REQUEST_MAKAO);
+			Packet packet = new Packet();
+			packet.setRequest(req);
+			try {
+				player.sendPakcet(packet);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//player = new Player(new Socket("127.0.0.1",9090));
 		}
 		else 
@@ -160,6 +172,12 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 			{
 				tourIndicator.setText("Not Your tourn");
 			}
+			else
+				if (request.getID() == request.REQUEST_WINNER)
+				{
+					String mess = request.getMessage();
+					tourIndicator.setText(mess);
+				}
 		
 	}
 }
