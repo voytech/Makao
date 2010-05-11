@@ -20,7 +20,11 @@ public class RequestProcessor {
     // ServerStateData
     private boolean requestReleased = false;
     private int  takeTimes = 0;
-    private Request lastGenerated = null;	
+     
+    //private Request
+    private Request requestBuffer = null;
+    private PlayerHandle requestInvoker = null;
+    //private Request lastGenerated = null;	
     private Request output = null;
 	private Card requestStarterCard = null;
 	
@@ -28,7 +32,8 @@ public class RequestProcessor {
 	private Card top=null;
 	
 	private Logger logger = Logger.getLogger("server.RequestProcessor");
-    public RequestProcessor(ServerControl control) {
+    public RequestProcessor(ServerControl control) 
+    {
 		this.controlCentre = control;
     	this.stack = control.getTableStack();
 		array = stack.getArray();
@@ -53,35 +58,67 @@ public class RequestProcessor {
 				if (takeTimes==2) takeTimes = 0;
 			}	
     }
+    private void processSingleRequest(Request player_req) throws IOException
+    {
+    	if (player_req!=null)
+		{
+	        byte reqID =player_req.getID();
+			if (reqID == Request.REQUEST_PUSH)
+			{
+		    	if (requestBuffer !=null)
+		    	{
+		    		if ((requestBuffer.getID() == Request.REQUEST_CARD_NAME) || (requestBuffer.getID() == Request.REQUEST_CARD_SUIT))
+		    		{
+		    			if (!controlCentre.getCurrentlyServed().equals(this.requestInvoker))
+		    			{
+		    				Request comp = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{player_req,requestBuffer});
+		    				this.onPushWithRequest(comp);
+		    			}
+		    			else 
+		    			{
+		    				this.requestBuffer = null;
+		    				this.requestInvoker = null;
+		    				onPush(player_req);
+		    			}
+		    		}
+		    	}
+		    	else onPush(player_req);
+			}
+			else 
+				if (reqID == Request.REQUEST_PUSH_WITH_REQUEST)
+				{
+			        onPushWithRequest(player_req);
+				}
+				else 
+					if (reqID == Request.REQUEST_TAKE)
+					{
+						onTake();
+					}
+		}
+		else requestFromTable();
+    }
 	public void processRequest(Request player_req) throws IOException 
 	{
 		zerothRecentRequest();		
 		output = null;
 		array = stack.getArray();
-		top = array[array.length-1];	
+		top = array[array.length-1];		
 		if (player_req!=null)
 		{
-	        byte reqID =player_req.getID();
-			if (reqID == Request.REQUEST_PUSH)
-			{		
-				onPush(player_req);
-			}
-			else 
-				if (reqID == Request.REQUEST_TAKE)
+	        byte reqID = player_req.getID();
+			if (reqID == Request.COMPOUND_REQUEST)
+			{
+				Request[] requests = player_req.getCompound();
+				for (Request req : requests)
 				{
-					onTake();
+					processSingleRequest(req);
 				}
-				else 
-					if ((player_req.getID() == Request.REQUEST_CARD_NAME) || (player_req.getID() == Request.REQUEST_CARD_SUIT))
-					{
-						output = player_req;
-						Packet packet = new Packet();
-						packet.setRequest(output);						
-						controlCentre.nextPlayerTurn().sendPakcet(packet);						
-					}		
-		}
-		else requestFromTable();
-		lastGenerated = output;
+			}
+			else
+			{
+				processSingleRequest(player_req);
+			}
+		}		
 	}
 	
 	private void onTake() throws IOException
@@ -91,14 +128,14 @@ public class RequestProcessor {
 		{
 			output = new Request(Request.REQUEST_TAKE,all.pop(1));
 			packet.setRequest(output);
-			controlCentre.sendPacketToCurrentlyServed(packet);
+			(requestInvoker = controlCentre.getCurrentlyServed()).sendPakcet(packet);
+			//controlCentre.sendPacketToCurrentlyServed(packet);
 			takeTimes=1;
 		}
 		else
 		if (takeTimes==1)
 		{					
 			int number_c = 0;
-			// sometimes should be not null but it is null indeed.
 			if (requestStarterCard!=null)
 			{
 				if (requestStarterCard.getName().equals(Card.Name.TWO) || requestStarterCard.getName().equals(Card.Name.THREE))
@@ -136,19 +173,52 @@ public class RequestProcessor {
 								}
 							}
 							output = new Request(Request.REQUEST_TAKE,all.pop(number_c));
-							//if (number_c>1) takeTimes = 0;
 						}
 						else output = null;
 			}
 			
 			packet.setRequest(output);
-			controlCentre.sendPacketToCurrentlyServed(packet);
+			controlCentre.getCurrentlyServed().sendPakcet(packet);
+			//controlCentre.sendPacketToCurrentlyServed(packet);
 			controlCentre.actualizePlayersStatuses();
 			controlCentre.nextPlayerTurn();
 			takeTimes = 2;										
 		}	
 	}
-	
+	private void onPushWithRequest(Request incomingRequest) throws IOException
+	{
+		Request[] reqs = incomingRequest.getCompound();
+		if ( reqs.length == 2 )
+		{
+			Request push = reqs[0];
+			Request req  = reqs[1];
+			if ((req.getID() == Request.REQUEST_CARD_NAME) || (req.getID() == Request.REQUEST_CARD_SUIT))
+			{
+		        Card[] cards = push.getCards();
+		        guard.setSelection(cards);
+		        //guard.setIncomingRequest(req);//?
+		        if (guard.testSelection())
+		        {
+		        	   takeTimes=0;        	   
+		        	   stack.push(cards);
+		               controlCentre.actualizeStacks(cards); 
+		         	   Packet packet = new Packet();
+		         	   packet.setRequest(req);
+		         	   controlCentre.actualizePlayersStatuses(); 
+		         	   this.requestBuffer = req;
+		         	   this.requestInvoker = controlCentre.getCurrentlyServed();
+		         	   controlCentre.nextPlayerTurn().sendPakcet(packet);		         	    
+		        }
+		        else 
+		        {
+		        	controlCentre.rejectPlayer();
+		        }
+		        guard.setIncomingRequest(null);
+		        guard.setSelection(null); //guard.
+				//lastGenerated = output;						
+			}
+		}
+	}
 	private void onPush(Request incomingRequest) throws IOException
 	{
 		//secondTake = false;                   
@@ -175,7 +245,8 @@ public class RequestProcessor {
          				   if (req.getID() == Request.REQUEST_CARD_NAME && req.getArg().equals(Card.Name.KING)) match++;
          				   if (req.getID() == Request.REQUEST_CARD_SUIT && req.getArg().equals(Card.Suit.SPADE)) match++;
          				   if (match==2)
-         				   {         				    
+         				   { 
+         					   //requestInvoker = controlCentre.getCurrentlyServed();
          					   controlCentre.previousPlayerTurn().sendPakcet(packet);
          					   return;
          				   }         			   
@@ -188,7 +259,8 @@ public class RequestProcessor {
         {
         	controlCentre.rejectPlayer();
         }
-        
+        guard.setIncomingRequest(null);
+        guard.setSelection(null);   
 	}
 	private Request requestFromTable()
 	{

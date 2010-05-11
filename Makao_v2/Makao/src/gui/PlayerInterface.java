@@ -16,6 +16,8 @@ import java.net.Socket;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -29,12 +31,15 @@ import shared.Request;
 import client.Player;
 
 public class PlayerInterface extends JPanel implements ActionListener, PacketListener{
-	private JButton takeCard,putCard,requestSuit,requestName,makao,ready;
+	private JButton takeCard,putCard,makao,ready;
+	private JCheckBox requestSuit,requestName;
 	private TakeButton takeButton = new TakeButton();
 	private ReadyButton readyButton = new ReadyButton();
 	private PassButton passButton = new PassButton();
 	private JLabel tourIndicator;
+	private JComboBox rSuit=null,rName=null;
 	private Messenger player = null;
+	private Request request = null;
 	public PlayerInterface(Messenger player)
 	{
 		this.setLayout(null);
@@ -45,24 +50,31 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		takeCard.addActionListener(this);
 		putCard = new JButton("Put");
 		putCard.addActionListener(this);
-		requestSuit = new JButton("Request suit");
+		requestSuit = new JCheckBox("Request suit");
+		rSuit = new JComboBox();
 		requestSuit.addActionListener(this);
-		requestName = new JButton("Request name");
+		requestName = new JCheckBox("Request name");
+		rSuit.addActionListener(this);
+		rName = new JComboBox();
 		requestName.addActionListener(this);
+		rName.addActionListener(this);
 		makao = new JButton("Makao");
 		makao.addActionListener(this);
 		ready = new JButton("Ready !!!");
 		ready.addActionListener(this);
-		tourIndicator = new JLabel("It is");
+		tourIndicator = new JLabel("Waiting for players");
 		takeCard.setLocation(20, 10);
 		takeCard.setSize(150, 30);
 		putCard.setLocation(20, 40);
 		putCard.setSize(150, 30);
 		requestSuit.setLocation(20, 70);
 		requestSuit.setSize(150, 30);
+		rSuit.setLocation(180, 70);
+		rSuit.setSize(150, 30);
 		requestName.setLocation(20, 100);
 		requestName.setSize(150, 30);
-		
+		rName.setLocation(180, 100);
+		rName.setSize(150,30);
 		passButton.setLocation(160,50);
 		passButton.setSize(150,70);	
 		takeButton.setLocation(10,50);
@@ -75,12 +87,12 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		makao.setSize(150, 30);
 		ready.setLocation(180, 40);
 		ready.setSize(150, 30);
-		tourIndicator.setLocation(180, 75);
+		tourIndicator.setLocation(20, 120);
 		tourIndicator.setSize(300, 70);
 		Font f = new Font(Font.SANS_SERIF,Font.BOLD,18);
 		tourIndicator.setFont(f);
 		tourIndicator.setForeground(Color.WHITE);
-		
+		this.initCombos();
 		this.add(takeCard);
 		this.add(putCard);
 		this.add(requestSuit);
@@ -88,6 +100,8 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		this.add(makao);
 		this.add(ready);
 		this.add(tourIndicator);
+		this.add(rName);
+		this.add(rSuit);
 		//this.add(takeButton);
 		//this.add(readyButton);
 		//this.add(passButton);
@@ -102,6 +116,18 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		//g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		
 		
+	}
+	private void initCombos()
+	{
+		
+		for (int i = 5; i< 11;i++) rName.addItem(i+"");
+		rName.addItem("Jack");
+		rName.addItem("Queen");
+		rName.addItem("King");
+		rSuit.addItem("Clubs");
+		rSuit.addItem("Spades");
+		rSuit.addItem("Hearts");
+		rSuit.addItem("Diamonds");
 	}
 	@Override
 	public void actionPerformed(ActionEvent a) {
@@ -142,7 +168,38 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 						e.printStackTrace();
 					}
 				}
-		
+				else 
+					if (source.equals(requestSuit))
+					{
+						String suit = (String)rSuit.getSelectedItem();
+						if (suit.equals("Clubs")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
+						else 
+							if (suit.equals("Diamonds")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.DIAMOND);	
+							else 
+								if (suit.equals("Spades")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE);							
+								else 
+									if (suit.equals("Hearts")) request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART);									 						
+					}
+					else 
+						if (source.equals(requestName))
+						{
+							String name = (String)rSuit.getSelectedItem();
+							if (name.equals("5")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.FIVE);
+							else 
+								if (name.equals("6")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SIX);	
+								else 
+									if (name.equals("7")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SEVEN);							
+									else 
+										if (name.equals("8")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.EIGHT);
+										else
+											if (name.equals("9")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.NINE);
+											else
+												if (name.equals("10")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.TEN);
+												else
+													if (name.equals("Jack")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.JACK);
+													else
+														if (name.equals("Queen")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.QUEEN);
+						}		
 	}
 	@Override
 	public void packetReceived(Packet packet) {
@@ -165,12 +222,12 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 	{
 		if (request.getID() == request.REQUEST_ENABLE_PLAYER)
 		{
-			tourIndicator.setText("Your tourn");
+			tourIndicator.setText("Your turn");
 		}
 		else
 			if (request.getID() == request.REQUEST_DISABLE_PLAYER)
 			{
-				tourIndicator.setText("Not Your tourn");
+				tourIndicator.setText("Not Your turn");
 			}
 			else
 				if (request.getID() == request.REQUEST_WINNER)
@@ -179,5 +236,13 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 					tourIndicator.setText(mess);
 				}
 		
+	}
+	public Request getSelectedRequest()
+	{
+		return request;
+	}
+	public void clearSelectedRequest() 
+	{
+		request = null;		
 	}
 }

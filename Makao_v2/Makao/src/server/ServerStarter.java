@@ -22,8 +22,10 @@ public class ServerStarter {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		Logger qLogger = Logger.getLogger("server.PlayerQueue");
 		Logger logger = Logger.getLogger("server.GameServer");
 		logger.addHandler(handler);
+		qLogger.addHandler(handler);
 		server = new GameServer(9090);
 		server.run();
 	}

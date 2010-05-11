@@ -70,14 +70,13 @@ public class GameServer {
 			}
 	    }
 		logger.log(Level.INFO,"Steady !!! Ready !!! GooOOooOOoOOOOooo !!! (Game started)");
-		int tours = 1;
 		control.prepareGame();			
 		PlayerHandle phandle = null;
-		
+		RoundCounter rCounter = RoundCounter.getInstance();
 		while(true)
 		{
 			logger.log(Level.INFO,"------------------------");
-			logger.log(Level.WARNING,"Starting tour :"+tours);
+			logger.log(Level.WARNING,"Starting round :"+rCounter.getRoundNumber());
 			logger.log(Level.INFO,"------------------------");
 			phandle = control.getCurrentlyServed();
 			Packet packet = this.waitForPacket(phandle);
@@ -101,7 +100,7 @@ public class GameServer {
 				}
 				break;
 			}
-			tours++;
+			rCounter.nextRound();
 		}
 		
 	}

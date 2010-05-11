@@ -175,6 +175,19 @@ public class ServerControl {
     	this.currentlyServed = queue.selectPlayer(playerID); 
 		return currentlyServed;
     }
+    public void unlockTour() throws IOException
+    {
+    	int i = 0;
+    	while (i<queue.getPlayersCount())
+    	{
+    		Packet packet = new Packet();	
+    		PlayerHandle player = queue.selectPlayer(i);
+    		if (player.equals(currentlyServed)) packet.setRequest(new Request(Request.REQUEST_ENABLE_PLAYER));	
+    		else packet.setRequest(new Request(Request.REQUEST_DISABLE_PLAYER));
+    		i++;
+    		player.sendPakcet(packet);
+    	}
+    }
     public void rejectPlayer()
     {
     	PlayerHandle handle   = queue.selectPlayer(playerID);

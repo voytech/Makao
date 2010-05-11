@@ -19,7 +19,7 @@ public class PlayerQueue implements Runnable, ReadErrorListener
 	private Logger logger;
 	public PlayerQueue(ServerSocket server) 
 	{
-		logger = Logger.getLogger("players-queue");
+		logger = Logger.getLogger("server.PlayerQueue");
 		logger.setLevel(Level.ALL);
 		this.server = server;
 		try {
@@ -114,15 +114,18 @@ public class PlayerQueue implements Runnable, ReadErrorListener
 		if (invoker instanceof PlayerHandle)
 		{
 			PlayerHandle handle = (PlayerHandle)invoker;
+			int index = players.indexOf(handle);
 			try {
 				handle.closeInput();
 				handle.closeOutput();
 				handle.getSocket().close();
+				logger.log(Level.SEVERE, "Player's connection rejected (Player - "+index+")");
 			} catch (IOException e) {
-				logger.log(Level.SEVERE, "Error while removing player handle");
+				logger.log(Level.SEVERE, "Error while removing player handle (Player - "+index+")");
 				e.printStackTrace();
 			}
-		}
-		players.remove(invoker);
+			players.remove(invoker);
+			logger.log(Level.SEVERE, "Player removed (Player - "+index+")") ;
+		}	
 	}	
 }

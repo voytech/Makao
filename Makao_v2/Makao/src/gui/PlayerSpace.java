@@ -26,6 +26,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 {
 	 private ArrayList<OpponentPlayer> opponents = new ArrayList<OpponentPlayer>();
 	 private TableCardContainer table;
+	 private PlayerInterface pi = null;
 	 private boolean dragging = false;
 	 private CardNode temporaryNode = null;
 	 private CardStackGuard guard = null;
@@ -39,13 +40,16 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		this.player = player;
 		this.player.addPacketListener(this);
 		this.setLayout(null);
-			    
-
+		pi =new PlayerInterface(player);
+        pi.setLocation(10,10);
+        pi.setSize(380,180);
+        
 	    this.setOpaque(false);
 	    this.addMouseMotionListener(this);
 	    this.addMouseListener(this);
 	    this.add(b);
-	    
+	    this.add(pi,0);	    
+
 	 }
 	 public void pushCardNode(CardNode node)
 	 {
@@ -232,7 +236,16 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 						if (playerEnabled)
 						{
 							Packet packet = new Packet();
-							packet.setRequest(new Request(Request.REQUEST_PUSH,scards));
+							
+							Request selectedReq = pi.getSelectedRequest();
+							Request outReq = null;
+							if (selectedReq!=null) 
+							{
+								outReq = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{new Request(Request.REQUEST_PUSH,scards),selectedReq});
+								pi.clearSelectedRequest();
+							}
+							else outReq = new Request(Request.REQUEST_PUSH,scards);
+							packet.setRequest(outReq);
 							try {
 							   player.sendPakcet(packet);
 							} catch (IOException e) {
@@ -240,9 +253,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 								e.printStackTrace();
 							}
 							incoming = null;
-							//reorder();
-						}
-							//table.pushCardNodes(getAndRemoveSelectedNodes());
+						}							
 					}
 				}
 			}
