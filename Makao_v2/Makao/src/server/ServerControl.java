@@ -21,6 +21,7 @@ public class ServerControl {
     private PlayerHandle markedPlayer = null;
     private int playerID = 0; 
     private int roundPoint = 0;
+    private int tursCount = 0;
     private Logger logger = Logger.getLogger("server.GameServer");
     public CardStack getTableStack()
     {
@@ -30,17 +31,17 @@ public class ServerControl {
     {
     	return all;
     }
-    public void markCurrentPlayer()
+    public void markRoundStart()
     {
-    	markedPlayer = this.currentlyServed;
+    	tursCount=this.playerID;
     }
     public boolean isRoundCompleted()
     {
-       return (markedPlayer == this.currentlyServed);	
+       return (tursCount == this.playerID);   	
     }
     public void unmark()
     {
-    	markedPlayer = null;
+    	//markedPlayer = null;
     }
     public PlayerHandle getCurrentlyServed()
     {

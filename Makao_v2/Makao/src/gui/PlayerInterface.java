@@ -226,7 +226,7 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		else 
 			if (requestName.isSelected())
 			{
-				String name = (String)rSuit.getSelectedItem();
+				String name = (String)rName.getSelectedItem();
 				if (name.equals("5")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.FIVE);
 				else 
 					if (name.equals("6")) request = new Request(Request.REQUEST_CARD_NAME,Card.Name.SIX);	

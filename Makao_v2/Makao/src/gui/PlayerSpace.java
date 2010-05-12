@@ -235,8 +235,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 					{
 						if (playerEnabled)
 						{
-							Packet packet = new Packet();
-							
+							Packet packet = new Packet();	
 							Request selectedReq = pi.getSelectedRequest();
 							Request outReq = null;
 							if (selectedReq!=null) 
@@ -258,8 +257,7 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 							} catch (IOException e) {
 								//JOptionPane.showM// TODO Auto-generated catch block
 								e.printStackTrace();
-							}
-							
+							}							
 						}							
 					}
 				}

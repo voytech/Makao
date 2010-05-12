@@ -62,20 +62,24 @@ public class RequestProcessor {
     {
     	if (player_req!=null)
 		{
+    		logger.log(Level.INFO,"Incoming request is not empty");
 	        byte reqID =player_req.getID();
 			if (reqID == Request.REQUEST_PUSH)
 			{
+				logger.log(Level.INFO,"Card push requested");
 		    	if (requestBuffer !=null)
 		    	{
+		    		logger.log(Level.INFO,"\"SUIT OR CARD\" request mode");
 		    		if ((requestBuffer.getID() == Request.REQUEST_CARD_NAME) || (requestBuffer.getID() == Request.REQUEST_CARD_SUIT))
 		    		{
 		    			if (!controlCentre.isRoundCompleted())
-		    			{
+		    			{			
 		    				Request comp = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{player_req,requestBuffer});
 		    				this.onPushWithRequest(comp);
 		    			}
 		    			else 
 		    			{
+		    				logger.log(Level.INFO,"Exiting \"SUIT OR CARD\" request mode");		
 		    				this.requestBuffer = null;
 		    				this.requestInvoker = null;
 		    				onPush(player_req);
@@ -95,10 +99,11 @@ public class RequestProcessor {
 						onTake();
 					}
 		}
-		else requestFromTable();
+		//else requestFromTable();
     }
 	public void processRequest(Request player_req) throws IOException 
 	{
+		logger.log(Level.WARNING,"Starting request processing...");
 		zerothRecentRequest();		
 		output = null;
 		array = stack.getArray();
@@ -118,14 +123,17 @@ public class RequestProcessor {
 			{
 				processSingleRequest(player_req);
 			}
-		}		
+		}
+		logger.log(Level.WARNING,"Request processing completed...");
 	}
 	
 	private void onTake() throws IOException
 	{
+		logger.log(Level.INFO,"\"TAKE\" request mode");		
 		Packet packet = new Packet();
 		if (takeTimes==0)
 		{
+			logger.log(Level.INFO,"\"FIRST TAKE\" request mode");    		
 			output = new Request(Request.REQUEST_TAKE,all.pop(1));
 			packet.setRequest(output);
 			(requestInvoker = controlCentre.getCurrentlyServed()).sendPakcet(packet);
@@ -134,10 +142,13 @@ public class RequestProcessor {
 		}
 		else
 		if (takeTimes==1)
-		{					
+		{
+			logger.log(Level.INFO,"\"SECOND TAKE\" request mode"); 		
 			int number_c = 0;
 			if (requestStarterCard!=null)
 			{
+				logger.log(Level.INFO,"Request starter is active - underlaying pending request");	
+				array = stack.getArray();
 				if (requestStarterCard.getName().equals(Card.Name.TWO) || requestStarterCard.getName().equals(Card.Name.THREE))
 				{
 					for (int i=array.length-1;i>=0;i--)
@@ -172,7 +183,7 @@ public class RequestProcessor {
 									number_c+=5;
 								}
 							}
-							output = new Request(Request.REQUEST_TAKE,all.pop(number_c));
+							output = new Request(Request.REQUEST_TAKE,all.pop(number_c-1));
 						}
 						else output = null;
 			}
@@ -187,6 +198,7 @@ public class RequestProcessor {
 	}
 	private void onPushWithRequest(Request incomingRequest) throws IOException
 	{
+		logger.log(Level.INFO,"CARD AND REQUEST PUSH request mode");
 		Request[] reqs = incomingRequest.getCompound();
 		if ( reqs.length == 2 )
 		{
@@ -209,7 +221,7 @@ public class RequestProcessor {
 		         	   controlCentre.actualizePlayersStatuses(); 
 		         	   this.requestBuffer = req;
 		         	   this.requestInvoker = controlCentre.getCurrentlyServed();
-		         	   if (this.requestBuffer == null) controlCentre.markCurrentPlayer();
+		         	   if (this.requestBuffer == null) controlCentre.markRoundStart();
 		         	   controlCentre.nextPlayerTurn().sendPakcet(packet);		         	    
 		        }
 		        else 
@@ -225,7 +237,7 @@ public class RequestProcessor {
 	private void onPush(Request incomingRequest) throws IOException
 	{
 		//secondTake = false;                   
-        logger.log(Level.INFO,"Player requested card push (player - )");
+        logger.log(Level.INFO,"CARD PUSH request mode");
         Card[] cards = incomingRequest.getCards();
         guard.setSelection(cards);
         if (guard.testSelection())
@@ -233,7 +245,7 @@ public class RequestProcessor {
         	   takeTimes=0;        	   
         	   stack.push(cards);
                controlCentre.actualizeStacks(cards); 
-         	   output = requestFromTable();
+         	   output = requestFromTable(cards);
          	   Packet packet = new Packet();
          	   packet.setRequest(output);
          	   controlCentre.actualizePlayersStatuses();
@@ -246,14 +258,16 @@ public class RequestProcessor {
          			   for (Request req : ingredients)
          			   {
          				   if (req.getID() == Request.REQUEST_CARD_NAME && req.getArg().equals(Card.Name.KING)) match++;
-         				   if (req.getID() == Request.REQUEST_CARD_SUIT && req.getArg().equals(Card.Suit.SPADE)) match++;
-         				   if (match==2)
-         				   { 
-         					   //requestInvoker = controlCentre.getCurrentlyServed();
-         					   controlCentre.previousPlayerTurn().sendPakcet(packet);
-         					   return;
-         				   }         			   
+         				   if (req.getID() == Request.REQUEST_CARD_SUIT && req.getArg().equals(Card.Suit.HEART)) match++;	   		   
          			   }
+         			   if (match==2)
+    				   { 
+    					   //requestInvoker = controlCentre.getCurrentlyServed();
+    					   controlCentre.previousPlayerTurn().sendPakcet(packet);
+    				       guard.setIncomingRequest(null);
+    				       guard.setSelection(null);
+    					   return;
+    				   }         	
          		   }
          	   }
          	   controlCentre.nextPlayerTurn().sendPakcet(packet);
@@ -265,34 +279,35 @@ public class RequestProcessor {
         guard.setIncomingRequest(null);
         guard.setSelection(null);   
 	}
-	private Request requestFromTable()
+	private Request requestFromTable(Card[] fromPreviousPlayer)
 	{
-		//Request output = null;
-		Card[] array = stack.getArray();
-		Card top = array[array.length-1];	
+		logger.log(Level.INFO,"TABLE RAISED request mode");
+		//Card[] array = stack.getArray();
+		Card top = fromPreviousPlayer[fromPreviousPlayer.length-1];	
+		Card bottom = fromPreviousPlayer[0];
 		if (!requestReleased)
 		{
 			if (top.getName().equals(Card.Name.TWO) || top.getName().equals(Card.Name.THREE))
 			{
 				output = new Request(Request.REQUEST_CARD_NAMES,new Card.Name[]{Card.Name.TWO,Card.Name.THREE});
-				if (requestStarterCard == null) requestStarterCard = top;
+				if (requestStarterCard == null) requestStarterCard = bottom;
 			}
 			if (top.getName().equals(Card.Name.FOUR))
 			{
 				output = new Request(Request.REQUEST_CARD_NAME,Card.Name.FOUR);
-				if (requestStarterCard == null) requestStarterCard = top;
+				if (requestStarterCard == null) requestStarterCard = bottom;
 			}
-			if (top.getName().equals(Card.Name.KING) && top.getSuit().equals(Card.Suit.SPADE))
+			if (top.getName().equals(Card.Name.KING) && bottom.getSuit().equals(Card.Suit.SPADE))
 			{
 				output = new Request(Request.COMPOUND_REQUEST,new Request[]{new Request(Request.REQUEST_CARD_NAME,Card.Name.KING),
 																			new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART)});
-				if (requestStarterCard == null) requestStarterCard = top;
+				if (requestStarterCard == null) requestStarterCard = bottom;
 			}
 			if (top.getName().equals(Card.Name.KING) && top.getSuit().equals(Card.Suit.HEART))
 			{
 				output = new Request(Request.COMPOUND_REQUEST,new Request[]{new Request(Request.REQUEST_CARD_NAME,Card.Name.KING),
 																			new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE)});
-				if (requestStarterCard == null) requestStarterCard = top;
+				if (requestStarterCard == null) requestStarterCard = bottom;
 			}
 			
 		}
