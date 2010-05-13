@@ -27,12 +27,15 @@ public class Request implements Serializable{
 	 public static final byte REQUEST_CARD_NAMES = 14;
 	 public static final byte REQUEST_WINNER = 15;
 	 public static final byte REQUEST_PUSH_WITH_REQUEST = 16;
+	 public static final byte REQUEST_READY = 17;
+	 public static final byte REQUEST_PUNISHMENT = 18;
 	 private byte request;
 	 private Object arg = null;
 	 private Card[] cards = null;
 	 private String r_message = "";
 	 private int number = 0;
 	 private Request[] compound = null;
+	 private Request inner = null;
      public Request(byte request, Object arg) 
      {
 		// TODO Auto-generated constructor stub
@@ -64,6 +67,13 @@ public class Request implements Serializable{
     	 this.r_message = message;
     	
      }
+     public Request(byte request,Request innerReq) 
+     {
+		// TODO Auto-generated constructor stub
+    	 this.request = request;
+    	 this.inner = innerReq;
+    	
+     }
      public Request(byte request) 
      {
 		// TODO Auto-generated constructor stub
@@ -90,9 +100,18 @@ public class Request implements Serializable{
 	{
 		return compound;
 	}
+	public Request getEncapsulatedRequest()
+	{
+		return inner;
+	}
 	public String getMessage()
 	{
 		return r_message;
+	}
+	public void setCards(Card[] scards) 
+	{
+		this.cards = scards;
+		
 	}
 
 	

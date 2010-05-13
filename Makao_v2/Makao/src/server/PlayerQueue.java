@@ -41,10 +41,11 @@ public class PlayerQueue implements Runnable, ReadErrorListener
 			int q=0;
 			for (PlayerHandle player : players)
 			{
-				String is_ready = player.getPlayerMessage("status");
-				if (is_ready.equals("ready")) count++;
-				else is_ready = "not ready"; 
-				logger.log(Level.INFO, "Player "+(q++)+" - "+is_ready);
+				if (player.isInQueue()) count++;
+				//String is_ready = player.getPlayerMessage("status");
+				//if (is_ready.equals("ready")) count++;
+				//else is_ready = "not ready"; 
+				//logger.log(Level.INFO, "Player "+(q++)+" - "+is_ready);
 			}
 			if ((count == players.size()) && (players.size()>=2)) isClosed = true;
 		//}

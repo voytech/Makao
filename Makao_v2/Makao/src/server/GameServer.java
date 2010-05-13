@@ -36,17 +36,14 @@ public class GameServer {
 		this.port = port;
 		queue = control.initPlayersQueue(port);
 	}
-    private Packet waitForPacket(PlayerHandle player)
+    private shared.Request waitForRequest(PlayerHandle player)
     {
-    	Packet cpacket = null;
+    	shared.Request req = null;
 		logger.log(Level.INFO,"Waiting for packet from (player)");
 		while(true)
 		{		
-			cpacket = player.getCurrentPacket();	
-			if (cpacket!=null)
-			{
-				if (cpacket.getRequest()!=null) break;
-			}
+			req = player.getCurrentRequest();	
+			if (req!=null) break;
 			try {
 				Thread.currentThread().sleep(100);
 			} catch (InterruptedException e) {
@@ -54,7 +51,7 @@ public class GameServer {
 				e.printStackTrace();
 			}				
 		}
-		return cpacket;
+		return req;
     }
 	public void run() 
 	{
@@ -79,8 +76,7 @@ public class GameServer {
 			logger.log(Level.WARNING,"Starting round :"+rCounter.getRoundNumber());
 			logger.log(Level.INFO,"------------------------");
 			phandle = control.getCurrentlyServed();
-			Packet packet = this.waitForPacket(phandle);
-			shared.Request in = packet.getRequest();
+			shared.Request in = this.waitForRequest(phandle);
 			try {
 				requester.processRequest(in);
 			} catch (IOException e) {

@@ -24,7 +24,7 @@ import tests.MessengerTest;
 
 public class Messenger implements Runnable{
     private Socket socket = null;
-    private ArrayList<PacketListener> listeners = new ArrayList<PacketListener>();
+    private ArrayList<RequestListener> listeners = new ArrayList<RequestListener>();
     private ArrayList<ReadErrorListener> e_listeners = new ArrayList<ReadErrorListener>();
     private Thread listeningThread = null;
     private Logger logger = Logger.getLogger("shared.Messenger");
@@ -72,13 +72,13 @@ public class Messenger implements Runnable{
 		// TODO Auto-generated method stub
 		return socket;
 	}
-	public void sendPakcet(Packet packet) throws IOException 
+	public void sendRequest(Request request) throws IOException 
 	{	
-		output.writeObject(packet);	
+		output.writeObject(request);	
 		output.flush();
 	}
 
-	public void addPacketListener(PacketListener plistener) 
+	public void addRequestListener(RequestListener plistener) 
 	{
 		listeners.add(plistener);
 	}
@@ -109,12 +109,12 @@ public class Messenger implements Runnable{
 				}
 				if (obj!=null)
 				{
-					if (obj instanceof Packet)
+					if (obj instanceof Request)
 					{
-						for (PacketListener listener : listeners)
+						for (RequestListener listener : listeners)
 						{
 							logger.log(Level.INFO,"Received packet redirected to listener: "+listener.toString());
-							listener.packetReceived((Packet)obj);
+							listener.requestReceived((Request)obj);
 						}
 					}
 				}

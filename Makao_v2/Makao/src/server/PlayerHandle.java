@@ -8,35 +8,37 @@ import java.util.Hashtable;
 import shared.Card;
 import shared.Messenger;
 import shared.Packet;
-import shared.PacketListener;
 import shared.ReadErrorListener;
 import shared.Request;
+import shared.RequestListener;
 
-public class PlayerHandle extends Messenger implements PacketListener{	
+public class PlayerHandle extends Messenger implements RequestListener{	
 	private Packet packet = null;
 	private boolean received = false;
-	private Hashtable<String,String> buffer = new Hashtable<String,String>();
-	private ArrayList<Packet> packetBuffer = new ArrayList<Packet>();
+	//private Hashtable<String,String> buffer = new Hashtable<String,String>();
+	private boolean enabled = false;
+	private ArrayList<Request> requestBuffer = new ArrayList<Request>();
 	
 	private ArrayList<Card> pcards= new ArrayList<Card>();
 	private boolean active = false;
 	private int disabledRoundCount = 0; 
-		
+	private boolean makaoState = false;
+	
 	public PlayerHandle(Socket p_socket)
 	{
 		super(p_socket);
-		addPacketListener(this);
+		addRequestListener(this);
 	}
-	public void sendPakcet(Packet packet) throws IOException
+	public void sendRequest(Request request) throws IOException
 	{
-		super.sendPakcet(packet);
-		Request req = packet.getRequest();
-		if (req!=null)
+		super.sendRequest(request);
+		//Request req = packet.getRequest();
+		if (request!=null)
 		{
-			if (req.getID() == Request.REQUEST_TAKE) addReferenceCards(req.getCards());
-			else  if (req.getID() == Request.REQUEST_WAITING) updateWaitingRoundsState(req.getNumber());
-			else if (req.getID() == Request.REQUEST_ENABLE_PLAYER) setActive(true);
-			else if (req.getID() == Request.REQUEST_DISABLE_PLAYER) setActive(false);
+			if (request.getID() == Request.REQUEST_TAKE) addReferenceCards(request.getCards());
+			else  if (request.getID() == Request.REQUEST_WAITING) updateWaitingRoundsState(request.getNumber());
+			else if (request.getID() == Request.REQUEST_ENABLE_PLAYER) setActive(true);
+			else if (request.getID() == Request.REQUEST_DISABLE_PLAYER) setActive(false);
 		}	
 	}
 
@@ -44,17 +46,17 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		return received;
 	}
 
-	public Packet getCurrentPacket() {
+	public Request getCurrentRequest() {
 		received = false;
-		if (packetBuffer.size()>0) return packetBuffer.remove(0);
+		if (requestBuffer.size()>0) return requestBuffer.remove(0);
 		return null;	
 	}
 
-	public String getPlayerMessage(String key) {
+	/*public String getPlayerMessage(String key) {
 		//if (packetBuffer.size()>0) packetBuffer.remove(0);
 		if (buffer.containsKey(key)) return buffer.get(key);
 		return "";
-	}
+	}*/
 	private void addReferenceCards(Card[] cards)
 	{
 		for (Card card : cards)
@@ -82,42 +84,39 @@ public class PlayerHandle extends Messenger implements PacketListener{
 		disabledRoundCount = drc;
 		active = false;
 	}
+	public void makaoSubmited(boolean state)
+	{
+		this.makaoState = true;
+	}
+	public boolean isMakaoSubmited()
+	{
+		return this.makaoState;
+	}
 	private void setActive(boolean active)
 	{
 		this.active = active;
 	}
 	public boolean isActive()          {return active;}
+	public boolean isInQueue()          {return enabled;}
 	public Card[] getStackReference()  {return pcards.toArray(new Card[0]);}
 	public int getWaitingRoundsCount() {return disabledRoundCount;}
 	@Override
-	public void packetReceived(Packet packet) {	
-		String message= packet.getMessage();
-		if (message!=null)
+	public void requestReceived(Request request) {	
+		//String message= request.getMessage();
+		if (request!=null)
 		{
-			if (!message.equals(""))
+			if (request.getID() == Request.REQUEST_READY) enabled = true;
+			if (isActive())
 			{
-				String[] keyValue = message.split("=");		
-				if (buffer.containsKey(keyValue[0])) buffer.remove(keyValue[0]);
-				this.buffer.put(keyValue[0], keyValue[1]);
-			    //return;	
-			}
-		}
-		if (isActive())
-		{
-			Request req = packet.getRequest();
-			if (req!=null)
-			{
-				if (req.getID() == Request.REQUEST_PUSH)
+				if (request.getID() == Request.REQUEST_PUSH)
 				{
-					Card[] cardsToPush  = req.getCards();
+					Card[] cardsToPush  = request.getCards();
 					removeReferenceCards(cardsToPush);	
 				}
+				this.received = true;
+				requestBuffer.add(0,request);
 			}
-			this.received = true;
-			this.packet = packet;
-			packetBuffer.add(0,packet);
-			
-		}	
+		}			
 	}
 
 }

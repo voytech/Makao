@@ -26,31 +26,30 @@ import javax.swing.border.BevelBorder;
 import shared.Card;
 import shared.Messenger;
 import shared.Packet;
-import shared.PacketListener;
+import shared.RequestListener;
 import shared.Request;
 
 import client.Player;
 
-public class PlayerInterface extends JPanel implements ActionListener, PacketListener{
-	private JButton takeCard,putCard,makao,ready;
-	private JCheckBox requestSuit,requestName;
+public class PlayerInterface extends JPanel implements ActionListener, RequestListener{
+	private JButton takeCard,ready;
+	private JCheckBox requestSuit,requestName, makao, nomakao;
 	private TakeButton takeButton = new TakeButton();
 	private ReadyButton readyButton = new ReadyButton();
 	private PassButton passButton = new PassButton();
 	private JLabel tourIndicator;
 	private JComboBox rSuit=null,rName=null;
 	private Messenger player = null;
+	private StateIndicator indicator= null;
 	ButtonGroup bgroup = null;
 	public PlayerInterface(Messenger player)
 	{
 		this.setLayout(null);
 	    this.player = player;
-	    this.player.addPacketListener(this);
+	    this.player.addRequestListener(this);
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		takeCard = new JButton("Take");
 		takeCard.addActionListener(this);
-		putCard = new JButton("Put");
-		putCard.addActionListener(this);
 		requestSuit = new JCheckBox("Request suit");
 		rSuit = new JComboBox();
 		requestSuit.addActionListener(this);
@@ -59,15 +58,15 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		rName = new JComboBox();
 		requestName.addActionListener(this);
 		rName.addActionListener(this);
-		makao = new JButton("Makao");
+		makao = new JCheckBox("Makao");
 		makao.addActionListener(this);
 		ready = new JButton("Ready !!!");
 		ready.addActionListener(this);
+		nomakao = new JCheckBox("And Makao !?");
+		nomakao.addActionListener(this);
 		tourIndicator = new JLabel("Waiting for players");
 		takeCard.setLocation(20, 10);
 		takeCard.setSize(150, 30);
-		putCard.setLocation(20, 40);
-		putCard.setSize(150, 30);
 		requestSuit.setLocation(20, 70);
 		requestSuit.setSize(150, 30);
 		rSuit.setLocation(180, 70);
@@ -88,16 +87,21 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		bgroup.add(requestSuit);
 		makao.setLocation(180, 10);
 		makao.setSize(150, 30);
-		ready.setLocation(180, 40);
+		nomakao.setLocation(180, 40);
+		nomakao.setSize(150, 30);
+		ready.setLocation(20, 40);
 		ready.setSize(150, 30);
 		tourIndicator.setLocation(20, 120);
 		tourIndicator.setSize(300, 70);
 		Font f = new Font(Font.SANS_SERIF,Font.BOLD,18);
 		tourIndicator.setFont(f);
 		tourIndicator.setForeground(Color.WHITE);
+		
+		indicator = new StateIndicator();
+		indicator.setLocation(330, 10);
+		indicator.setSize(100, 100);
 		this.initCombos();
 		this.add(takeCard);
-		this.add(putCard);
 		this.add(requestSuit);
 		this.add(requestName);
 
@@ -106,6 +110,8 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		this.add(tourIndicator);
 		this.add(rName);
 		this.add(rSuit);
+		this.add(nomakao);
+		this.add(indicator);
 		//this.add(takeButton);
 		//this.add(readyButton);
 		//this.add(passButton);
@@ -115,11 +121,6 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		Graphics2D g2 = (Graphics2D)g;
 		//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		//super.paintComponent(g);
-		//g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		//g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		
-		
 	}
 	private void initCombos()
 	{
@@ -140,10 +141,8 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		if (source.equals(makao))
 		{
 			Request req = new Request(Request.REQUEST_MAKAO);
-			Packet packet = new Packet();
-			packet.setRequest(req);
 			try {
-				player.sendPakcet(packet);
+				player.sendRequest(req);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -154,7 +153,8 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 			if (source.equals(ready))
 			{
 				try {
-					player.sendPakcet(new Packet("status=ready"));
+					Request request = new Request(Request.REQUEST_READY);
+					player.sendRequest(request);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -163,19 +163,16 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 			else 
 				if (source.equals(takeCard))
 				{
-					Packet packet = new Packet();
-					packet.setRequest(new Request(Request.REQUEST_TAKE));
 					try {
-						player.sendPakcet(packet);
+						player.sendRequest(new Request(Request.REQUEST_TAKE));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
+				}				
 	}
 	@Override
-	public void packetReceived(Packet packet) {
-		Request request =  packet.getRequest();
+	public void requestReceived(Request request) {
 		if (request!=null)
 		{
 			if (request.getID() == Request.COMPOUND_REQUEST)
@@ -195,11 +192,13 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 		if (request.getID() == Request.REQUEST_ENABLE_PLAYER)
 		{
 			tourIndicator.setText("Your turn");
+			indicator.turnGreenLight();
 		}
 		else
 			if (request.getID() == Request.REQUEST_DISABLE_PLAYER)
 			{
 				tourIndicator.setText("Not Your turn");
+				indicator.turnRedLight();
 			}
 			else
 				if (request.getID() == Request.REQUEST_WINNER)
@@ -207,7 +206,16 @@ public class PlayerInterface extends JPanel implements ActionListener, PacketLis
 					String mess = request.getMessage();
 					tourIndicator.setText(mess);
 				}
+				//else if(request.get)
 		
+	}
+	boolean isMakaoPunishmentChecked()
+	{
+		return nomakao.isSelected();
+	}
+	boolean isMakaoChecked()
+	{
+		return makao.isSelected();
 	}
 	public Request getSelectedRequest()
 	{

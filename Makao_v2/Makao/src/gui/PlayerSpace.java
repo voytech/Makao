@@ -19,10 +19,10 @@ import shared.CardStack;
 import shared.CardStackGuard;
 import shared.Messenger;
 import shared.Packet;
-import shared.PacketListener;
 import shared.Request;
+import shared.RequestListener;
 
-public class PlayerSpace extends CardNodeContainer implements MouseListener , MouseMotionListener, PacketListener
+public class PlayerSpace extends CardNodeContainer implements MouseListener , MouseMotionListener, RequestListener
 {
 	 private ArrayList<OpponentPlayer> opponents = new ArrayList<OpponentPlayer>();
 	 private TableCardContainer table;
@@ -38,11 +38,11 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		this.guard=p;		
 		this.table = b;
 		this.player = player;
-		this.player.addPacketListener(this);
+		this.player.addRequestListener(this);
 		this.setLayout(null);
 		pi =new PlayerInterface(player);
         pi.setLocation(10,10);
-        pi.setSize(380,180);
+        pi.setSize(450,180);
         
 	    this.setOpaque(false);
 	    this.addMouseMotionListener(this);
@@ -215,7 +215,56 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		//temporaryNode.setLocation(arg0.getPoint());
 		
 	}
-
+    private void sendCards()
+    {
+    	Card[] scards = this.getSelectedCards().toArray(new Card[0]);
+		if (scards.length > 0)
+		{
+			CardStack stack = this.table.getCards();
+			guard = new  CardStackGuard(stack);
+			guard.setSelection(scards);
+			guard.setIncomingRequest(incoming);
+			if(guard.testSelection())
+			{
+				if (playerEnabled)
+				{	
+					Request selectedReq = pi.getSelectedRequest();
+					Request outReq = null;	
+					ArrayList<Request> reqs = new ArrayList<Request>();
+					if (selectedReq!=null) 
+					{
+						if (guard.setOutgoingRequest(selectedReq)) reqs.add(selectedReq);	
+					}
+					if (pi.isMakaoChecked()) reqs.add(new Request(Request.REQUEST_MAKAO));
+					if (pi.isMakaoPunishmentChecked()) reqs.add(new Request(Request.REQUEST_PUNISHMENT));
+					if (reqs.size() > 0)
+					{
+						outReq = new Request(Request.REQUEST_PUSH,reqs.toArray(new Request[0]));
+						outReq.setCards(scards);
+						incoming = null;
+					}
+					else
+						{
+							outReq = new Request(Request.REQUEST_PUSH,scards);
+							incoming = null;
+						}
+					try {
+					   player.sendRequest(outReq);
+					} catch (IOException e) {
+						//JOptionPane.showM// TODO Auto-generated catch block
+						e.printStackTrace();
+					}							
+				}							
+			}
+		}
+    }
+    private void changeCardsOrder(Point p)
+    {
+    	int xPos = this.getStackRightX() - p.x;
+		int index = 0;
+		if (xPos>0)  index = (int)xPos/cardOffset;
+		if (index<this.getComponentCount()-1) insertCardAt(index,getSelectedNodes()[0]);
+    }
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		if (dragging)
@@ -224,50 +273,11 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 			Rectangle rectangle = new Rectangle(table.getLocation(),table.getSize());
 		    if (rectangle.contains(point))
 			{
-		    	Card[] scards = this.getSelectedCards().toArray(new Card[0]);
-				if (scards.length > 0)
-				{
-					CardStack stack = this.table.getCards();
-					guard = new  CardStackGuard(stack);
-					guard.setSelection(scards);
-					guard.setIncomingRequest(incoming);
-					if(guard.testSelection())
-					{
-						if (playerEnabled)
-						{
-							Packet packet = new Packet();	
-							Request selectedReq = pi.getSelectedRequest();
-							Request outReq = null;
-							if (selectedReq!=null) 
-							{
-								if (guard.setOutgoingRequest(selectedReq))
-								{
-								   outReq = new Request(Request.REQUEST_PUSH_WITH_REQUEST,new Request[]{new Request(Request.REQUEST_PUSH,scards),selectedReq});
-								   incoming = null;
-								}
-							}
-							else
-								{
-									outReq = new Request(Request.REQUEST_PUSH,scards);
-									incoming = null;
-								}
-							packet.setRequest(outReq);
-							try {
-							   player.sendPakcet(packet);
-							} catch (IOException e) {
-								//JOptionPane.showM// TODO Auto-generated catch block
-								e.printStackTrace();
-							}							
-						}							
-					}
-				}
+		    	sendCards();
 			}
 			else
 			{
-				int xPos = this.getStackRightX() - arg0.getPoint().x;
-				int index = 0;
-				if (xPos>0)  index = (int)xPos/cardOffset;
-				if (index<this.getComponentCount()-1) insertCardAt(index,getSelectedNodes()[0]);
+				changeCardsOrder(point);
 			}	
 			dragging = false;
 		}
@@ -297,8 +307,8 @@ public class PlayerSpace extends CardNodeContainer implements MouseListener , Mo
 		
 	}
 	@Override
-	public void packetReceived(Packet packet) {
-		Request request =  packet.getRequest();
+	public void requestReceived(Request request) 
+	{
 		//String message = packet.getMessage();
 		//JOptionPane.showMessageDialog(null,message,"message",JOptionPane.INFORMATION_MESSAGE);
 		if (request!=null)
