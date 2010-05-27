@@ -1,0 +1,112 @@
+package fxclient;
+import javafx.stage.*;
+import javafx.scene.*;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import java.net.Socket;
+import shared.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+
+
+
+
+
+
+/**
+ * @author voytech
+ */
+var gameScene: Scene;
+var connectScene: Scene;
+var activeScene:Scene;
+
+var stage: Stage;
+var player = Player{ scene : bind gameScene; }
+var messengerTask:MessengerTask;
+function getOpponentsCards(oc:OpponentCards[]) : ImageView[]
+{
+    var ivs:ImageView[];
+    for (cards in oc)  insert cards.content into ivs;
+    return ivs;
+}
+var serverBox = TextBox {
+   	              text: "127.0.0.1"
+   	              columns: 30
+   	              selectOnFocus: true
+   	              translateX:  bind connectScene.width/2-100;
+   	              translateY:  bind connectScene.height/2;
+   	              scaleX : 2.0;
+   	              scaleY : 2.0;
+   	             } 
+var ok = OkButton
+{
+    x: bind connectScene.width/2 - 50;
+    y: bind connectScene.height/2 + 100;
+}
+ok.prepare();
+ok.onMouseClicked = function(e:MouseEvent):Void
+{
+    ok.defaultOnClick();
+    messengerTask = MessengerTask 
+    {
+       	socket : new Socket(serverBox.rawText,9090)
+       	listeners:  [
+       	               player, 	               
+       			    ]  
+    }
+    messengerTask.start();
+    player.messenger = messengerTask.messenger;
+    activeScene = gameScene;    
+}
+
+connectScene = Scene
+{
+    width: 1000
+    height: 700
+    content : bind 
+    [
+     	ImageView {
+     	          image : Image{url: "{__DIR__}images/intro.png"};
+     	          fitHeight : bind connectScene.height;
+     	          fitWidth  : bind connectScene.width;
+     	       	 }   
+     	serverBox,
+     	ok
+    ]         
+}
+
+gameScene = Scene
+{
+     width: 1000
+     height: 700
+     content: bind // we must bind it to force content variable to point on that variant of it which has all changes made to contents
+     [   
+       	 ImageView {
+          	     image : Image{url: "{__DIR__}images/table2.jpg"};
+          	     fitHeight : bind gameScene.height;
+           	     fitWidth  : bind gameScene.width;
+       	 }   
+       	 player.tableCards.content,        
+         player.playerCards.content,
+         player.userInterface.readyButton,
+         //player.userInterface.passButton,
+         player.userInterface.takeButton,
+        //player.userInterface.tourIndicator,
+         player.userInterface.indicators.getContent(),
+         player.userInterface.suitRequestPanel.getContent(),
+         getOpponentsCards(player.opponentsCards),                            	                                	
+     ]
+}
+activeScene = connectScene;
+stage = Stage {
+     title : "Makao card game"
+     resizable : true
+     scene: bind activeScene
+ }
+ player.userInterface.readyButton.play();
+ player.userInterface.takeButton.play();
+// player.userInterface.tourIndicator.play();
+// player.userInterface.passButton.play();
+

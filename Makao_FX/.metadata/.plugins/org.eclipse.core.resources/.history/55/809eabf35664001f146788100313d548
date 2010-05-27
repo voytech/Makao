@@ -1,0 +1,44 @@
+package fxclient;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.animation.transition.RotateTransition;
+import javafx.animation.Timeline;
+import javafx.animation.Interpolator;
+
+/**
+ * @author Wojtek
+ */
+public class PassButton extends AnimatedNode
+{
+     var rotate = RotateTransition {
+                               node : this
+                               duration: 3s
+                               byAngle: 360 
+                               repeatCount:Timeline.INDEFINITE
+                               interpolator: Interpolator.LINEAR
+                    };
+            public override function prepare():Void
+            {
+                pushed = Image{url: "{__DIR__}images/pass.png"};
+                released = Image{url: "{__DIR__}images/pass.png"};
+                image = released;
+            }
+            public override function defaultOnClick() : Void 
+            {    
+                  if (isPushed)
+                  {
+                       isPushed = false;
+                       image = released;
+                  }
+                  else
+                  {
+                       isPushed= true;
+                       image = pushed;
+                  }
+                  //translate.stop();               
+            }
+            public override function play()
+            {
+                translate.play();
+            }
+}

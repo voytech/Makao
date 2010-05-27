@@ -1,0 +1,304 @@
+package server;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import shared.Card;
+import shared.CardStack;
+import shared.CardStackGuard;
+import shared.DeckOfCards;
+import shared.Request;
+
+public class ServerControl {
+	private CardStack table = new CardStack();
+    private DeckOfCards all = new DeckOfCards();
+    private CardStackGuard guard = new CardStackGuard(table);
+    private PlayerQueue queue = null;
+    private PlayerHandle currentlyServed = null;
+    private PlayerHandle markedPlayer = null;
+    private int playerID = 0; 
+    private int roundPoint = 0;
+    
+    private int roundStarter = 0;
+    private boolean roundStarted=false,roundEnded = false;
+    
+    private Logger logger = Logger.getLogger("server.GameServer");
+    public CardStack getTableStack()
+    {
+    	return table;
+    }
+    public DeckOfCards getDeck()
+    {
+    	return all;
+    }
+    public void markRoundStart()
+    {
+    	roundEnded = false;
+    	roundStarted= true;
+    	roundStarter=this.playerID;
+    }
+    private void updateRoundState()
+    {
+    	if (roundStarter == this.playerID) roundEnded = true;
+    }
+    public boolean isRoundCompleted()
+    { 
+       return roundEnded;  	
+    }
+    public void unmark()
+    {
+    	roundEnded = false;
+    	roundStarted= false;
+    }
+    public PlayerHandle getCurrentlyServed()
+    {
+    	currentlyServed = queue.selectPlayer(playerID);
+    	return currentlyServed;
+    }
+    public PlayerHandle getSelectedPlayer(int i)
+    {
+    	return queue.selectPlayer(i);
+    }
+    public PlayerQueue initPlayersQueue(ServerSocket socket)
+    {
+    	queue = new PlayerQueue(socket);
+		return queue;
+    }
+	public int getNextPlayerID()
+	{
+		if (playerID < roundPoint) restoreRoundPoint();
+		if (playerID == queue.getPlayersCount()-1) playerID=0;
+		else playerID++;
+		roundPoint = playerID;
+		return playerID;
+	}
+	public int getPreviousPlayerID()
+	{
+		if (playerID == 0) playerID = queue.getPlayersCount()-1;
+		else playerID--;
+		return playerID;
+	}
+	public void actualizeStacks(Card[] toActualize) throws IOException
+	{
+		for (int i=0;i<queue.getPlayersCount();i++)
+		{
+			PlayerHandle player = queue.selectPlayer(i);			
+			player.sendRequest(new shared.Request(shared.Request.REQUEST_CARDSTACK_ACTUALIZATION,toActualize));			
+		}
+	}
+	public void actualizePlayersStatuses() throws IOException
+	{
+		for (int i=0;i<queue.getPlayersCount();i++)
+		{
+			PlayerHandle player = queue.selectPlayer(i);
+			if (!player.equals(currentlyServed))
+			{
+				String status = "opponents_cards=";
+				for (int j=0;j<queue.getPlayersCount();j++)
+				{
+					if (i!=j)
+					{
+						int count = queue.selectPlayer(j).getStackReference().length;
+						status+=(j+":"+count+";");
+					}
+				}
+				player.sendRequest(new shared.Request(shared.Request.REQUEST_STRING_MESSAGE,status));				
+			}
+		}
+	}
+	public int restoreRoundPoint()
+	{
+		playerID = roundPoint;
+		return playerID;	
+	}
+	public void sendPacketToCurrentlyServed(Request request) throws IOException
+	{
+		currentlyServed.sendRequest(request);	
+	}
+	public PlayerHandle previousPlayerTurn() throws IOException
+	{		
+		getPreviousPlayerID();
+		updateRoundState();
+    	int i=0;
+    	while (i<queue.getPlayersCount())
+		{
+			PlayerHandle player = queue.selectPlayer(i);
+			if (player!=null)
+			{
+				if (i==playerID) 
+				{
+					int waitings = player.getWaitingRoundsCount();
+					if (waitings > 0)
+					{
+						//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+						player.updateWaitingRoundsState(--waitings);
+						getPreviousPlayerID();
+						i=0;
+						continue;
+					}				
+					else 
+						{
+							player.sendRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+						//player.state().setActive(true);
+						}
+				}
+				else 
+					{
+						player.sendRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+					//player.state().setActive(false);
+					}	
+			}
+			i++;
+		}	
+    	this.currentlyServed = queue.selectPlayer(playerID); 
+		return currentlyServed;
+	}
+    public PlayerHandle nextPlayerTurn() throws IOException
+    {
+    	getNextPlayerID();
+    	updateRoundState();
+    	int i=0;
+    	while (i<queue.getPlayersCount())
+		{
+			PlayerHandle player = queue.selectPlayer(i);
+			if (player!=null)
+			{
+				if (i==playerID) 
+				{
+					int waitings = player.getWaitingRoundsCount();
+					if (waitings > 0)
+					{
+					//packet.setRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+						player.updateWaitingRoundsState(--waitings);
+						getNextPlayerID();
+						i=0; 
+						continue;
+					}				
+					else 
+						{
+							player.sendRequest(new shared.Request(shared.Request.REQUEST_ENABLE_PLAYER));
+							//player.state().setActive(true);
+						}
+				}
+				else 
+					{
+						player.sendRequest(new shared.Request(shared.Request.REQUEST_DISABLE_PLAYER));
+						//player.state().setActive(false);
+					}
+			}
+			i++;
+		}	
+    	this.currentlyServed = queue.selectPlayer(playerID); 
+		return currentlyServed;
+    }
+    public void unlockTour() throws IOException
+    {
+    	int i = 0;
+    	while (i<queue.getPlayersCount())
+    	{
+    		PlayerHandle player = queue.selectPlayer(i);
+    		if (player!=null)
+    		{
+    			if (player.equals(currentlyServed)) player.sendRequest(new Request(Request.REQUEST_ENABLE_PLAYER));	
+    			else player.sendRequest(new Request(Request.REQUEST_DISABLE_PLAYER));
+    		}
+    		i++;
+    	}
+    }
+    //To correct
+    public void rejectPlayer()
+    {
+    	PlayerHandle handle   = queue.selectPlayer(playerID);
+    	Card[] cardsToRestore = handle.getStackReference();
+    	queue.remove(playerID);
+    	all.push(cardsToRestore);
+    	all.shuffle();
+    }
+    public boolean prepareGame()
+    {
+    	logger.log(Level.INFO,"Game initialization...");
+    	all.shuffle();
+    	logger.log(Level.INFO,"Deck of cards shuffled...");
+    	int playerNum = 0;
+    	Card tcard = all.pop();
+    	table.push(tcard);
+    	try {
+			this.actualizeStacks(new Card[]{tcard});
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	logger.log(Level.INFO,"table initialized with first card...");
+    	while(playerNum<queue.getPlayersCount())
+    	{
+    		logger.log(Level.INFO,"Initializing player ("+playerNum+") game space...(Players total"+queue.getPlayersCount()+")");
+    		PlayerHandle handle = queue.selectPlayer(playerNum);
+    		shared.Request req = new shared.Request(shared.Request.REQUEST_TAKE,all.pop(5));				                       
+    		try {
+				handle.sendRequest(req);
+				if (playerNum==0)
+				{
+					handle.sendRequest(new shared.Request(Request.REQUEST_ENABLE_PLAYER));
+					//handle..setActive(true);
+				}
+				else 
+					{
+						handle.sendRequest(new shared.Request(Request.REQUEST_DISABLE_PLAYER));
+						//handle.state().setActive(false);
+					}	
+				logger.log(Level.INFO,"Starter cards sent to player ("+playerNum+")");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				logger.log(Level.SEVERE,"Could not send starter cards to player ("+playerNum+")");
+				e.printStackTrace();
+			}
+    		playerNum++;
+    	}
+    	try {
+			this.actualizePlayersStatuses();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return true;
+    }
+    public void announceWinner() throws IOException
+    {
+    	PlayerHandle winner = null;
+    	for (PlayerHandle player : queue.getPlayers())
+    	{
+    		Card[] sRef = player.getStackReference();
+    		if (sRef.length == 0) {winner = player; break;}
+    	}
+    	if (winner!=null)
+    	{
+    		for (PlayerHandle player : queue.getPlayers())
+    		{
+    			Request req = null;
+    			if (player.equals(winner)) req = new Request(Request.REQUEST_WINNER,"You are WINNER !!!");	
+    			else req =new Request(Request.REQUEST_WINNER,"You have FAILED :("); 
+    			player.sendRequest(req);	
+    		}
+    	}
+    }
+    public void sendNickNames()
+    {
+    	String message = "nickNames=";
+    	for (PlayerHandle player : queue.getPlayers())
+		{
+			message += player.getNick()+";";	
+		}
+    }
+	public void executeMakaoPunishment() throws IOException {
+		for (PlayerHandle player : queue.getPlayers())
+    	{
+    		Card[] sRef = player.getStackReference();
+    		if ((sRef.length==1) && (!player.isMakaoSubmited()))
+    		{
+    			player.sendRequest(new Request(Request.REQUEST_TAKE,all.pop(5)));
+    		}
+    	}	
+	}
+}

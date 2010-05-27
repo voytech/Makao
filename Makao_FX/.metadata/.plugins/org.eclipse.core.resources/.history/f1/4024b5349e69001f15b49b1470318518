@@ -1,0 +1,20 @@
+package fxclient;
+import javafx.scene.*;
+
+
+
+
+/**
+ * @author Wojtek
+ */
+public class SceneSelector
+{
+    public var scenes:Scene[];
+    public var current:Scene;
+    var currentInd:Integer = 0;
+    public function nextScene()
+    {
+        if (currentInd == (sizeof scenes)) currentInd=0 else currentInd++;
+        current = scenes[currentInd];
+    }
+}

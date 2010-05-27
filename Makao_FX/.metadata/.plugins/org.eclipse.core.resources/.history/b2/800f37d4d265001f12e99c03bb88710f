@@ -1,0 +1,13 @@
+package fxclient;
+
+/**
+ * @author Wojtek
+ */
+public class IndicatorPanel extends PanelBase
+{
+    var statusLamp=NeonLight 
+    {
+        
+    }
+    
+}

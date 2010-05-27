@@ -1,0 +1,178 @@
+package fxclient;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.animation.transition.ScaleTransition;
+import javafx.animation.Timeline;
+import shared.*;
+
+/**
+ * @author Wojtek
+ */
+public class NameRequestPanel extends PanelBase
+{
+    var dScaleTransition:ScaleTransition;
+    var five:ImageView;
+    var six:ImageView;
+    var seven:ImageView;
+    var eight:ImageView;
+    var nine:ImageView;
+    var ten: ImageView;
+	var jack: ImageView;
+	var queen: ImageView;
+    var king: ImageView;
+    var currentNode : ImageView;
+    postinit
+    {
+        width = 150;
+        height = 400;
+        var area = height/8-30;
+            
+        five = ImageView 
+        {
+                image : Image{url:"{__DIR__}images/five.png"}
+                x : bind x+55
+                y : bind y+area
+                onMouseClicked : function(e:MouseEvent):Void
+                {
+                   selectClub(); 
+                }
+         }            
+         six = ImageView 
+         {
+                image : Image{url:"{__DIR__}images/six.png"}
+                x : bind x+55
+                y : bind y+2*area  
+                onMouseClicked : function(e:MouseEvent):Void
+                {
+                   selectDiamond();  
+                }  
+          }
+          seven = ImageView 
+          {
+                image : Image{url:"{__DIR__}images/seven.png"}
+                x : bind x+55
+                y : bind y+(3*area)
+                onMouseClicked : function(e:MouseEvent):Void
+                {
+                    selectSpade(); 
+                }
+          }
+          eight = ImageView 
+          {
+               image : Image{url:"{__DIR__}images/eight.png"}
+               x : bind x+55
+               y : bind y+(4*area)
+               onMouseClicked : function(e:MouseEvent):Void
+               { 
+                 selectHeart(); 
+               }
+          }
+          eight = ImageView 
+          {
+               image : Image{url:"{__DIR__}images/nine.png"}
+               x : bind x+55
+               y : bind y+(4*area)
+               onMouseClicked : function(e:MouseEvent):Void
+               { 
+                 selectHeart(); 
+               }
+          }
+          eight = ImageView 
+          {
+                image : Image{url:"{__DIR__}images/ten.png"}
+                x : bind x+55
+                y : bind y+(4*area)
+                onMouseClicked : function(e:MouseEvent):Void
+                { 
+                   selectHeart(); 
+                }
+          }
+
+          dScaleTransition = ScaleTransition {
+                            duration: 1s
+                            node: currentNode
+                            fromX: 1.2
+                            toX: 0.8
+                            fromY: 1.2
+                            toY: 0.8
+                            repeatCount: Timeline.INDEFINITE
+                            autoReverse: true
+                        };   
+          background.opacity = 0.2;  
+           
+    }
+    public override function getContent() : ImageView[]
+    {
+        var content:ImageView[] = [background,five,six,seven,eight,nine,ten];
+        return content;
+    }
+    function newTransition():Void
+    {
+       dScaleTransition = ScaleTransition {
+                      duration: 1s
+                      node: currentNode
+                      fromX: 1.2
+                      toX: 0.8
+                      fromY: 1.2
+                      toY: 0.8
+                      repeatCount: Timeline.INDEFINITE
+                      autoReverse: true
+                      }; 
+    }
+    function selectNone() : Void 
+    {
+        dScaleTransition.stop();
+        currentNode = null;
+    }
+    function select(name:Card.Name):Void
+    {        
+        dScaleTransition.stop();
+        if (name == Card.Name.FIVE)   currentNode = five;
+        if (name == Card.Name.SIX)    currentNode = six;
+        if (name == Card.Name.SEVEN)  currentNode = seven;
+        if (name == Card.Name.EIGHT)  currentNode = eight;
+        if (name == Card.Name.NINE)   currentNode = nine;
+        if (name == Card.Name.TEN)    currentNode = ten;
+        newTransition();
+        dScaleTransition.play();     
+    } 
+    public function implicateRequest():Request
+    {
+         var request = null;
+         if (currentNode!=null)
+         {
+         	if (currentNode.equals(five))
+         	{
+            	 request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.SPADE);   
+         	}
+         	else 
+         	if (currentNode.equals(six))
+         	{
+            	 request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.HEART);
+         	}
+         	else 
+         	if (currentNode.equals(seven))
+         	{
+           	  request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.DIAMOND);
+         	}
+         	else 
+         	if (currentNode.equals(eight))
+         	{
+           	  request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
+         	}
+         	else
+         	if (currentNode.equals(nine))
+         	{
+         	  request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
+         	}
+         	else
+         	if (currentNode.equals(ten))
+         	{
+         	  request = new Request(Request.REQUEST_CARD_SUIT,Card.Suit.CLUB);
+         	}     
+            selectNone();    
+         }         
+         return request;
+    }
+}

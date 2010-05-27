@@ -1,0 +1,31 @@
+package fxclient;
+import shared.*;
+/**
+ * @author Wojtek
+ */
+public class PlayerOutput
+{
+    public var tableCards:TableCards;
+    public var currentRequest:Request;
+    public var enabled:Boolean;
+    public var guard:CardStackGuard;
+    public var selection:Card[];
+    public var messenger:MessengerFX;
+    public var outgoingRequest:Request;
+    public function isValid() : Boolean 
+    {
+        guard = new CardStackGuard(tableCards.getTableStack());
+        guard.setSelection(selection);
+        guard.setIncomingRequest(currentRequest);
+        return ( guard.testSelection() and enabled and guard.setOutgoingRequest(outgoingRequest));
+    }
+    public function flush() : Void
+    {
+        if (messenger!=null)
+        {
+            var stack:CardStack = new CardStack();
+            stack.push(selection);
+        	messenger.sendRequest(new Request(Request.REQUEST_PUSH,stack.getArray()));
+        }
+    }
+}

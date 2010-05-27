@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="90"
+   inkscape:export-xdpi="90"
+   inkscape:export-filename="D:\PROGRAMMING\Makao_v3\Makao\src\fxclient\images\makao_button_up.png"
+   sodipodi:docname="makao.svg"
+   inkscape:version="0.47 r22583"
+   version="1.1"
+   id="svg4939"
+   height="64"
+   width="128">
+  <defs
+     id="defs4941">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5886">
+      <stop
+         style="stop-color:#ffd047;stop-opacity:1;"
+         offset="0"
+         id="stop5888" />
+      <stop
+         style="stop-color:#ffd047;stop-opacity:0;"
+         offset="1"
+         id="stop5890" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective4947" />
+    <inkscape:perspective
+       id="perspective4957"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       id="filter3383"
+       inkscape:label="Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Glow of object's own color at the edges"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3385"
+         stdDeviation="5"
+         result="result91" />
+      <feComposite
+         id="feComposite3387"
+         in2="result91"
+         in="SourceGraphic"
+         operator="over" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4081"
+       id="linearGradient4097"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.63184545,0,0,0.82632031,-41.642594,834.24366)"
+       x1="-67.073601"
+       y1="71.296928"
+       x2="348.79303"
+       y2="43.145462" />
+    <linearGradient
+       id="linearGradient4081">
+      <stop
+         style="stop-color:#f0f9af;stop-opacity:1;"
+         offset="0"
+         id="stop4083" />
+      <stop
+         style="stop-color:#e9afaf;stop-opacity:0;"
+         offset="1"
+         id="stop4085" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4030"
+       id="linearGradient4036"
+       x1="158.57143"
+       y1="199.50504"
+       x2="550"
+       y2="141.64789"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-110.71429,20.285714)" />
+    <linearGradient
+       id="linearGradient4030">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop4032" />
+      <stop
+         id="stop4038"
+         offset="0.67938834"
+         style="stop-color:#ff0000;stop-opacity:0.49803922;" />
+      <stop
+         style="stop-color:#ff0000;stop-opacity:0;"
+         offset="1"
+         id="stop4034" />
+    </linearGradient>
+    <filter
+       id="filter3990"
+       inkscape:menu-tooltip="Draws a black outline around"
+       inkscape:menu="ABCs"
+       inkscape:label="Black outline"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3992"
+         stdDeviation="2"
+         in="SourceAlpha"
+         result="result0" />
+      <feComposite
+         k4="0"
+         k1="0"
+         id="feComposite3994"
+         in2="result0"
+         result="result3"
+         operator="arithmetic"
+         in="SourceGraphic"
+         k2="1"
+         k3="10" />
+      <feComposite
+         id="feComposite3996"
+         in2="result3"
+         operator="in"
+         in="result3"
+         result="result4" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter5852">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.27062241"
+         id="feGaussianBlur5854" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5886"
+       id="linearGradient5892"
+       x1="51.81643"
+       y1="930.64777"
+       x2="391.95782"
+       y2="930.64777"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       id="filter6934"
+       inkscape:label="Drop shadow"
+       width="1.5"
+       height="1.5"
+       x="-.25"
+       y="-.25">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.21396574"
+         id="feGaussianBlur6936"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix6950" />
+      <feGaussianBlur
+         id="feGaussianBlur6952"
+         in="fbSourceGraphicAlpha"
+         stdDeviation="2,000000"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix6954"
+         result="bluralpha"
+         type="matrix"
+         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1,000000 0 " />
+      <feOffset
+         id="feOffset6956"
+         in="bluralpha"
+         dx="0,100000"
+         dy="0,100000"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge6958">
+        <feMergeNode
+           id="feMergeNode6960"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode6962"
+           in="fbSourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="119.86589"
+     inkscape:cy="73.66397"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="962"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4944">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(14.966704,-864.17128)">
+    <rect
+       style="fill:#0000ff;fill-opacity:1;filter:url(#filter3990)"
+       id="rect3740"
+       width="190"
+       height="64.285713"
+       x="9.2857122"
+       y="897.36218"
+       ry="20.203051"
+       transform="matrix(0.63184545,0,0,0.82632031,-16.249599,128.57901)" />
+    <path
+       style="fill:url(#linearGradient4097);fill-opacity:1;filter:url(#filter5852)"
+       d="m 1.6243209,870.29416 c 5.2229416,-0.30748 14.3306351,-0.39853 53.8685701,-0.39853 48.877889,0 46.419309,2.29674 45.801239,2.7886 -12.54345,6.25353 -29.897918,7.73083 -43.68036,10.05566 -12.445721,1.8521 -16.547036,2.61379 -22.254702,4.13302 -22.50597,5.99049 -39.348372,15.55369 -43.618048,29.54698 -2.889859,-5.25045 -7.591289,-45.75383 9.8833009,-46.12573 z"
+       id="path4079"
+       sodipodi:nodetypes="csccscc" />
+    <text
+       xml:space="preserve"
+       style="font-size:32px;font-style:normal;font-weight:normal;fill:#ffe680;fill-opacity:1;stroke:url(#linearGradient5892);stroke-opacity:0.5335968;filter:url(#filter6934);font-family:Nimbus Sans L;-inkscape-font-specification:Nimbus Sans L"
+       x="50.273785"
+       y="942.10089"
+       id="text4163"
+       transform="matrix(0.63184545,0,0,0.82632031,-16.249599,128.57901)"><tspan
+         sodipodi:role="line"
+         id="tspan4165"
+         x="50.273785"
+         y="942.10089"
+         style="stroke:url(#linearGradient5892);stroke-opacity:0.5335968">MAKAO</tspan></text>
+  </g>
+</svg>

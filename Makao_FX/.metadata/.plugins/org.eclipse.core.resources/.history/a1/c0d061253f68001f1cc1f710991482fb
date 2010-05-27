@@ -1,0 +1,76 @@
+package fxclient;
+import shared.*;
+import javafx.stage.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
+import java.net.Socket;
+
+
+
+
+
+
+/**
+ * @author Wojtek
+ */
+public class ConnectingScene extends Scene
+{
+    public var messengerTask:MessengerTask;
+    public var player:Player;
+    var serverBox = TextBox 
+                    {
+       	              text: "127.0.0.1"
+       	              columns: 30
+       	              selectOnFocus: true
+       	              translateX:  bind width/2-100
+       	              translateY:  bind height/2
+       	              scaleX : 2.0
+       	              scaleY : 2.0
+       	            } 
+    var ok = OkButton
+    {
+        x: bind width/2 - 50;
+        y: bind height/2 + 100;
+    }
+
+    postinit
+    {
+            ok.prepare();
+            ok.onMouseClicked = function(e:MouseEvent):Void
+            {
+                ok.defaultOnClick();
+                tryConnect();                          
+            }
+            content = 
+                [
+                 	ImageView {
+                 	          image : Image{url: "{__DIR__}images/intro.png"};
+                 	          fitHeight : bind height;
+                 	          fitWidth  : bind width;
+                 	       	 }   
+                 	serverBox,
+                 	ok
+                ]     
+    }
+    function tryConnect()
+    {
+        messengerTask = MessengerTask 
+                        {
+                           	socket : new Socket(serverBox.rawText,9090)
+                           	listeners:  [
+                           	               player 	               
+                           			    ]  
+                        }
+        messengerTask.start();
+        player.messenger = messengerTask.messenger;
+        
+    }
+}

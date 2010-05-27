@@ -1,0 +1,10 @@
+package shared;
+
+public class PlayerInfo {
+	private String name= "nameless one";
+	private int id=0;
+	private boolean ready = false;
+	private boolean active = false;
+	private int cardNum=0;
+
+}

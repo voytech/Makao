@@ -1,0 +1,174 @@
+package fxclient;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.animation.transition.ScaleTransition;
+import javafx.animation.Timeline;
+
+/**
+ * @author Wojtek
+ */
+public class SuitRequestPanel extends PanelBase
+{
+    var area = height/4-30;
+    var hScaleTransition:ScaleTransition;  
+    var sScaleTransition:ScaleTransition;
+    var cScaleTransition:ScaleTransition;
+    var dScaleTransition:ScaleTransition;
+    var clubSelected:Boolean = false;
+    var spadeSelected:Boolean = false;
+    var diamondSelected:Boolean = false;
+    var heartSelected:Boolean = false;
+    var diamond:ImageView;
+    var heart:ImageView;
+    var spade:ImageView;
+    var club:ImageView;
+
+
+    postinit
+    {
+        club = ImageView 
+        {
+                image : Image{url:"{__DIR__}images/club.png"}
+                x : bind x+80
+                y : bind y+area
+                onMouseClicked : function(e:MouseEvent):Void
+                {
+                   selectClub(); 
+                }
+         }            
+         diamond = ImageView 
+            {
+                image : Image{url:"{__DIR__}images/diamond.png"}
+                x : bind x+80
+                y : bind y+2*area  
+                onMouseClicked : function(e:MouseEvent):Void
+                {
+                   selectDiamond();  
+                }  
+            }
+                var spade = ImageView 
+                {
+                    image : Image{url:"{__DIR__}images/spade.png"}
+                    x : bind x+80
+                    y : bind y+(3*area)
+                    onMouseClicked : function(e:MouseEvent):Void
+                    {
+                        selectSpade(); 
+                    }
+                }
+                var heart = ImageView 
+                {
+                    image : Image{url:"{__DIR__}images/heart.png"}
+                    x : bind x+80
+                    y : bind y+(4*area)
+                    onMouseClicked : function(e:MouseEvent):Void
+                    { 
+                       selectHeart(); 
+                    }
+                }
+     	hScaleTransition = ScaleTransition {
+                            duration: 1s
+                            node: heart
+                            fromX: 1.2
+                            toX: 0.8
+                            fromY: 1.2
+                            toY: 0.8
+                            repeatCount: Timeline.INDEFINITE
+                            autoReverse: true
+                        };
+        sScaleTransition = ScaleTransition {
+                             duration: 1s
+                             node: spade
+                             fromX: 1.2
+                             toX: 0.8
+                             fromY: 1.2
+                             toY: 0.8
+                             repeatCount: Timeline.INDEFINITE
+                             autoReverse: true
+                         };
+        cScaleTransition = ScaleTransition {
+                            duration: 1s
+                            node: club
+                            fromX: 1.2
+                            toX: 0.8
+                            fromY: 1.2
+                            toY: 0.8
+                            repeatCount: Timeline.INDEFINITE
+                            autoReverse: true
+                        }; 
+            dScaleTransition = ScaleTransition {
+                            duration: 1s
+                            node: diamond
+                            fromX: 1.2
+                            toX: 0.8
+                            fromY: 1.2
+                            toY: 0.8
+                            repeatCount: Timeline.INDEFINITE
+                            autoReverse: true
+                        };   
+             background.opacity = 0.6;  
+           
+    }
+    public override function getContent() : ImageView[]
+    {
+        var content:ImageView[] = [background,club,heart,diamond,spade];
+        return content;
+    }
+    
+    function selectClub():Void
+    {        
+        spadeSelected = false;
+        heartSelected = false;
+        diamondSelected = false;
+        clubSelected = true;
+        cScaleTransition.stop();
+        cScaleTransition.node = club;                
+        cScaleTransition.play();
+        //sScaleTransition.stop();
+        //hScaleTransition.stop();
+        //dScaleTransition.stop();     
+    }
+    function selectHeart():Void
+    {        
+        spadeSelected = false;
+        heartSelected = true;
+        diamondSelected = false;
+        clubSelected = false;
+        cScaleTransition.stop();
+        cScaleTransition.node = heart;
+        cScaleTransition.play();
+             
+       // sScaleTransition.stop();
+       // hScaleTransition.play();
+       // dScaleTransition.stop();     
+    }
+    function selectDiamond():Void
+    {        
+       spadeSelected = false;
+       heartSelected = false;
+       diamondSelected = true;
+       clubSelected = false;
+       cScaleTransition.stop();
+       cScaleTransition.node = diamond;
+       cScaleTransition.play();
+      // sScaleTransition.stop();
+      // hScaleTransition.stop();
+      // dScaleTransition.play();     
+    }
+    function selectSpade():Void
+    {        
+       spadeSelected = true;
+       heartSelected = false;
+       diamondSelected = false;
+       clubSelected = false;
+       cScaleTransition.stop();
+       cScaleTransition.node = spade;
+       cScaleTransition.play();
+             /
+      // cScaleTransition.stop();
+      // sScaleTransition.play();
+      // hScaleTransition.stop();
+      // dScaleTransition.stop();     
+    }
+}

@@ -1,0 +1,28 @@
+package fxclient;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+
+/**
+ * @author Wojtek
+ */
+public class PanelBase
+{
+    public var tittle : String;
+    public var x:Integer;
+    public var y:Integer;
+    public var height:Integer;
+    public var width:Integer;
+    public var background = Rectangle {
+        x: bind x,
+    	y: bind y,
+        width: bind width,
+    	height: bind height,
+        fill: Color.BLACK
+   
+    public function getContent() : ImageView[]
+    {
+        return null;
+    }
+}

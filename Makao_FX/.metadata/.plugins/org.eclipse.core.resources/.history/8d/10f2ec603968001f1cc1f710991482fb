@@ -1,0 +1,16 @@
+package fxclient;
+import shared.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.*;
+
+
+/**
+ * @author Wojtek
+ */
+public class ConnectingScene extends Scene
+{
+    
+}

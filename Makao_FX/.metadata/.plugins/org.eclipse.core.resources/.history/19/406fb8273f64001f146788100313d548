@@ -1,0 +1,37 @@
+package fxclient;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.input.*;
+
+
+
+/**
+ * @author Wojtek
+ */
+public class AnimatedNode extends ImageView
+{
+    public var pushed:Image;
+    public var released:Image;
+   // public var view:ImageView;
+    public var isPushed:Boolean on replace oldValue { if (isPushed==true) onPushed() else onReleased()}
+    postinit{
+        onMouseClicked = function(e:MouseEvent):Void{defaultOnClick();}
+    }
+    public function prepare() : Void{}
+    public function play() : Void{} 
+    public function onPushed() : Void{}
+    public function onReleased() : Void{}
+    public function defaultOnClick():Void
+    {
+        if (isPushed)
+        {
+            isPushed = false;
+            image = released;
+        }
+        else
+        {
+            isPushed= true;
+        	image = pushed;
+        } 
+    }  
+}

@@ -1,0 +1,48 @@
+package fxclient;
+import shared.*;
+import java.util.ArrayList;
+/**
+ * @author Wojtek
+ */
+public class PlayerOutput
+{
+    public var tableCards:TableCards;
+    public var currentRequest:Request;
+    public var enabled:Boolean;
+    public var guard:CardStackGuard;
+    public var selection:Card[];
+    public var messenger:MessengerFX;
+    public var outgoingRequest:Request;
+    public function isValid() : Boolean 
+    {
+        guard = new CardStackGuard(tableCards.getTableStack());
+        guard.setSelection(selection);
+        guard.setIncomingRequest(currentRequest);
+        return ( guard.testSelection() and enabled and guard.setOutgoingRequest(outgoingRequest));
+    }
+    public function flush() : Void
+    {
+        if (messenger!=null)
+        {
+            var stack:CardStack = new CardStack();
+            stack.push(selection);
+            var reqs:Request[];
+            if (outgoingRequest!=null) insert outgoingRequest into reqs;
+            var req;
+            if (reqs.size()==0) 
+            {
+                req = new Request(Request.REQUEST_PUSH);
+            }
+            else
+            {
+                var arrayList:ArrayList arrayList = new ArrayList();
+                for (reqA in reqs) {
+                     arrayList.add(reqA);
+                }
+            	req = new Request(Request.REQUEST_PUSH,arrayList.toArray());
+            }     	
+        	req.setCards(stack.getArray());
+        	messenger.sendRequest(req);
+        }
+    }
+}

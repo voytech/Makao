@@ -1,0 +1,17 @@
+package fxclient;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+/**
+ * @author Wojtek
+ */
+public class PanelBase
+{
+    public var tittle : String;
+    public var background = ImageView 
+    {
+    	image: Image {
+       	 	url: "{__DIR__}/images/panel.png" 
+		}
+    }
+    public function getContent() : ImageView[]{return null;}
+}

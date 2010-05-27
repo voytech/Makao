@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.sun.javafx.eclipse.core.launch.LaunchConfigurationDelegate">
+<stringAttribute key="JavaFXLaunchAppletHeight" value=""/>
+<stringAttribute key="JavaFXLaunchAppletWidth" value=""/>
+<stringAttribute key="JavaFXLaunchMainClass" value="fxclient.Player"/>
+<stringAttribute key="JavaFXLaunchProjectName" value="Makao"/>
+<stringAttribute key="JavaFXLaunchTarget" value="desktop/jar"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/Makao/src/fxclient/Player.fx"/>
+<listEntry value="/Makao"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+<listEntry value="4"/>
+</listAttribute>
+</launchConfiguration>

@@ -1,0 +1,64 @@
+package fxclient;
+import shared.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+
+/**
+ * @author Wojtek
+ */
+public class IndicatorPanel extends PanelBase
+{
+    public-read var statusLamp=NeonLight 
+    {
+        x : bind x+80;
+        y : bind y+15;
+    }
+    var cimage:Image;
+    public-read var pendingRequest = ImageView
+    {
+        x : bind x;
+        y : bind y+12;
+        image : bind cimage;
+    }
+    //var sourceRequest;
+    postinit
+    {
+        background.opacity = 0.4;
+        width = 300;
+        height = 100;
+    }
+    public function setSourceRequest(request:Request)
+    {
+        if (request.getID() == Request.REQUEST_CARD_NAME)
+        {
+            var cName = request.getArg();   
+        }
+        else 
+        if (request.getID() == Request.REQUEST_CARD_NAME)
+        {
+            var cSuit = request.getArg();     
+            if (cSuit == Card.Suit.CLUB)
+            {
+                cimage = Image{url:"{__DIR__}images/club.png";}
+            }
+            if (cSuit == Card.Suit.DIAMOND)
+            {
+                cimage = Image{url:"{__DIR__}images/diamond.png";}               
+            }
+            if (cSuit == Card.Suit.HEART)
+            {
+                cimage = Image{url:"{__DIR__}images/heart.png";} 
+            }
+            if (cSuit == Card.Suit.SPADE)
+            {
+                cimage = Image{url:"{__DIR__}images/spade.png";}
+            }   
+        }    
+    }
+    public override function getContent():ImageView[]
+    {
+       return [background,pendingRequest,statusLamp];   
+    } 
+    
+}

@@ -66,10 +66,13 @@ public class ClientApplication extends JFrame {
 		ImagesBuffer.getInstance().addEntry("table", "images"+File.separator+"table2.jpg");
 		ImagesBuffer.getInstance().addEntry("takeButton", "images"+File.separator+"takeButton.gif");
 		ImagesBuffer.getInstance().addEntry("readyButton", "images"+File.separator+"readyButton.gif");
+		ImagesBuffer.getInstance().addEntry("readyButtonPushed", "images"+File.separator+"readyButtonPushed.gif");
+
 		ImagesBuffer.getInstance().addEntry("passButton", "images"+File.separator+"passButton.gif");
 		ImagesBuffer.getInstance().addEntry("greenLight", "images"+File.separator+"green_light.gif");
 		ImagesBuffer.getInstance().addEntry("redLight", "images"+File.separator+"red_light.gif");
 		ImagesBuffer.getInstance().addEntry("yellowLight", "images"+File.separator+"yellow_light.gif");
+		ImagesBuffer.getInstance().addEntry("loginPanel", "images"+File.separator+"login_panel.gif");
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

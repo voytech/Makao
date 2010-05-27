@@ -1,0 +1,72 @@
+package fxclient;
+import javafx.scene.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
+import java.net.Socket;
+import shared.*;
+
+
+/**
+ * @author Wojtek
+ */
+public class IntroductionScene extends Scene
+{
+        public var messenger:MessengerFX;
+        public var selector:SceneSelector;
+        var introBox = TextBox 
+                            {
+               	              text: "Nameless"
+               	              columns: 30
+               	              selectOnFocus: true
+               	              translateX: bind width/2 - 110// bind sboxXloc
+               	              translateY:  bind height/2
+               	              scaleX : 2.0
+               	              scaleY : 3.0
+               	              opacity : 0.4
+               	            }
+        var ok = OkButton
+        {
+            x: bind width/2 - 110;
+            y: bind height/2 + 100;
+        }
+    
+        postinit
+        {
+                ok.prepare();
+                ok.onMouseClicked = function(e:MouseEvent):Void
+                {
+                    ok.defaultOnClick();
+                    introduce();                          
+                }
+                ok.play();
+                content = 
+                    [
+                     	ImageView {
+                     	          image : Image{url: "{__DIR__}images/intro.png"};
+                     	          fitHeight : bind height;
+                     	          fitWidth  : bind width;
+                     	       	 }  
+                        ImageView {
+                     	          image : Image{url: "{__DIR__}images/tittle2.png"};
+                     	          x : bind width/2 - Image{url: "{__DIR__}images/tittle2.png"}.width/2;
+                     	          y : bind height/5;
+                     	          scaleX : 0.7;
+                     	          scaleY : 0.7;
+                     	       	 }  
+                     	introBox,
+                     	ok
+                    ]     
+        }
+        function introduce()
+        {     
+            messenger.sendRequest(new Request(Request.REQUEST_NICK_NAME,introBox.rawText));
+            selector.nextScene();
+        }
+}

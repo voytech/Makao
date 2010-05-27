@@ -1,0 +1,65 @@
+package fxclient;
+import javafx.scene.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
+import java.net.Socket;
+import shared.*;
+
+
+/**
+ * @author Wojtek
+ */
+public class IntroductionScene extends Scene
+{
+        public var messengerTask:MessengerTask;
+        public var player:Player;
+        public var selector:SceneSelector;
+        var introBox = TextBox 
+                        {
+           	              text: "127.0.0.1"
+           	              columns: 30
+           	              selectOnFocus: true
+           	              translateX:  bind width/2-100
+           	              translateY:  bind height/2
+           	              scaleX : 2.0
+           	              scaleY : 2.0
+           	            } 
+        var ok = OkButton
+        {
+            x: bind width/2 - 50;
+            y: bind height/2 + 100;
+        }
+    
+        postinit
+        {
+                ok.prepare();
+                ok.onMouseClicked = function(e:MouseEvent):Void
+                {
+                    ok.defaultOnClick();
+                    introduce();                          
+                }
+                content = 
+                    [
+                     	ImageView {
+                     	          image : Image{url: "{__DIR__}images/intro2.png"};
+                     	          fitHeight : bind height;
+                     	          fitWidth  : bind width;
+                     	       	 }   
+                     	introBox,
+                     	ok
+                    ]     
+        }
+        function introduce()
+        {     
+            messenger = messengerTask.messenger;
+            messenger.sendRequest(new Request(Request.REQUEST_NICK_NAME,introBox.rawText));
+            selector.nextScene();
+        }
+}

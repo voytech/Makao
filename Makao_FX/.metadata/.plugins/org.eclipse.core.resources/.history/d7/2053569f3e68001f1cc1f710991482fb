@@ -1,0 +1,18 @@
+package fxclient;
+import javafx.stage.*;
+import javafx.scene.*;
+
+
+/**
+ * @author Wojtek
+ */
+public class SceneSelector
+{
+    public var stage:Stage;
+    public var scenes:Scene[];
+    public var current:Scene;
+    public function nextScene():Scene
+    {
+        
+    }
+}

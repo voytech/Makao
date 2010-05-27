@@ -51,7 +51,8 @@ public class Board extends JPanel  implements HierarchyBoundsListener  {
 	private Messenger player = null;
 	private int playerCardsIndex = 0; //we will be adding cards into that index which is pointed by number of last components size;
 	private int cardTableIndex = 0;
-    public  Board(Dimension size)
+    private LoginPanel lpanel = new LoginPanel();
+	public  Board(Dimension size)
     {
        // this.setSize(size);	     
     	this.setLayout(null); 
@@ -71,23 +72,13 @@ public class Board extends JPanel  implements HierarchyBoundsListener  {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		lpanel.setLocation(200,200);
+		lpanel.setSize(800, 500);
 		playerCards = new PlayerSpace(tableCards,null,player);
         playerCards.setLocation(0, 0);
         playerCards.setSize(this.getSize().width,this.getSize().height);  
-       /* tableCards.pushCardNode(new CardNode(new Card(Card.Name.FIVE,Card.Suit.CLUB)));
-        tableCards.pushCardNode(new CardNode(new Card(Card.Name.EIGHT,Card.Suit.CLUB)));
-        tableCards.pushCardNode(new CardNode(new Card(Card.Name.FOUR,Card.Suit.HEART)));
-        tableCards.pushCardNode(new CardNode(new Card(Card.Name.FIVE,Card.Suit.HEART)));
-        tableCards.pushCardNode(new CardNode(new Card(Card.Name.KING,Card.Suit.CLUB)));
-              
-        playerCards.pushCardNode(new CardNode(new Card(Card.Name.ACE,Card.Suit.HEART)));
-        playerCards.pushCardNode(new CardNode(new Card(Card.Name.ACE,Card.Suit.DIAMOND)));
-        playerCards.pushCardNode(new CardNode(new Card(Card.Name.ACE,Card.Suit.CLUB)));
-        playerCards.pushCardNode(new CardNode(new Card(Card.Name.ACE,Card.Suit.SPADE)));
-        playerCards.pushCardNode(new CardNode(new Card(Card.Name.EIGHT,Card.Suit.SPADE)));*/                      
-        //this.addFocusListener(l)
         this.add(playerCards);
-        
+        this.add(lpanel);
        // this.add(tableCards);
 
     }
@@ -99,31 +90,7 @@ public class Board extends JPanel  implements HierarchyBoundsListener  {
     {
     	return tableCards;
     }
-   /* public void addPlayerCardComponent(CardNode node)
-    {
-    	this.add(node, 0);
-    	cardTableIndex++;
-    }
-    public int getPlayerCardCount()
-    {
-    	return cardTableIndex;
-    }
-    public void removePlayerCardComponent(CardNode node)
-    {
-    	//if (this.)
-    	this.remove(node);
-    	cardTableIndex--;
-    }
-    public void addTableCardComponent(CardNode node)
-    {
-    	this.add(node,cardTableIndex);
-    }
-    public void removeTableCardComponent(CardNode node)
-    {
-    	this.remove(node);
-    	//cardTableIndex++;
-    }*/
-
+  
 
     //@Override
 	public void paintComponent(Graphics g)

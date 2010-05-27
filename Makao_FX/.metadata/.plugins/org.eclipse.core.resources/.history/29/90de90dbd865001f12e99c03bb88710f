@@ -1,0 +1,33 @@
+package fxclient;
+import shared.*;
+/**
+ * @author Wojtek
+ */
+public class IndicatorPanel extends PanelBase
+{
+    public-read var statusLamp=NeonLight 
+    {
+        x : bind x+150;
+        y : bind y;
+    }
+    public-read var pendingRequests = PendingRequestIndicator
+    {
+        x : bind x;
+        y : bind y;
+    }
+    //var sourceRequest;
+    postinit
+    {
+        width = 300;
+        height = 100;
+    }
+    public function setSourceRequest(request:Request)
+    {
+        if (request.getID == Request.REQUEST_CARD_NAME)
+        {
+            
+        }
+        
+    }
+    
+}

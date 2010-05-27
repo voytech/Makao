@@ -1,0 +1,71 @@
+package fxclient;
+import shared.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.*;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * @author Wojtek
+ */
+public class LobbyScene extends Scene
+{
+     public var messenger:MessengerFX;
+     public var player:Player;
+     public var selector:SceneSelector;
+     var players:Text[];
+     var ok = ReadyButton
+     {
+        x: bind width/2 - 50;
+        y: bind height - 200;
+     }
+     public override var content = bind  
+     [
+       	ImageView {
+      	          image : Image{url: "{__DIR__}images/intro3.png"};
+       	          fitHeight : bind height;
+       	          fitWidth  : bind width;
+       	       	 } 
+       	players,  
+       	ok
+     ];
+     postinit
+     {
+          ok.prepare();
+          ok.onMouseClicked = function(e:MouseEvent):Void
+          {
+             ok.defaultOnClick();
+             ready();                          
+          } 
+          ok.play();        
+     }
+     function ready()
+     {    
+          messenger.sendRequest(new Request(Request.REQUEST_READY));
+          selector.nextScene();
+     }
+     public function updatePlayersInfo(infos:PlayerInfo[])
+     {
+        var lx = width/2 - width/4;
+        var ly = height/2 - height/4;
+        players = [];
+       	for (info in infos)
+       	{
+       	    insert Text {
+       	        font: Font {
+       	            size: 44
+       	        },
+       	        fill : Color.WHITE;
+       	        x: bind lx,
+       	        y: ly,
+       	        content: "Player {info.getId()} [ {info.getNickName()} ] {info.isReady()}"
+       	    } into players;
+       	    ly += 50;
+       	}   
+     }
+}

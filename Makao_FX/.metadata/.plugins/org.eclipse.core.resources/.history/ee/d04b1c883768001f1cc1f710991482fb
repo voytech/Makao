@@ -1,0 +1,127 @@
+package server;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+public class GameServer {
+
+	private int port = 9090;
+	private volatile boolean  stopped = false,queueBroken = false;
+	private PlayerQueue queue = null;
+	private ServerControl control = null; 
+	private RequestProcessor requester = null;
+	private Logger logger = null;
+	private Thread thread = null;
+	private ServerSocket  ssocket = null; 
+	public GameServer(int port) throws IOException 
+	{
+		logger = Logger.getLogger("server.GameServer");
+		logger.setLevel(Level.ALL);	
+		this.port = port;
+		ssocket = new ServerSocket(port);
+	}
+    private shared.Request waitForRequest(PlayerHandle player)
+    {
+    	shared.Request req = null;
+		logger.log(Level.INFO,"Waiting for packet from (player)");
+		while(true)
+		{		
+			req = player.getCurrentRequest();	
+			if (req!=null) break;
+			if (player.getSocket().isClosed()) break;
+			try {
+				Thread.currentThread().sleep(100);
+			} catch (InterruptedException e) {
+				logger.log(Level.SEVERE,"Could not fall asleep..");
+				e.printStackTrace();
+			}				
+		}
+		return req;
+    }
+	private void run() 
+	{	
+		while(!queue.isClosed())
+	    {
+			logger.log(Level.WARNING,"Game server can not start game... (sleeping)");
+			try {
+				Thread.currentThread().sleep(500);
+			} catch (InterruptedException e) {
+				logger.log(Level.SEVERE,"Could not fall asleep..");
+				e.printStackTrace();
+			}
+	    }
+		logger.log(Level.INFO,"Steady !!! Ready !!! GooOOooOOoOOOOooo !!! (Game started)");
+		control.prepareGame();			
+		PlayerHandle phandle = null;
+		RoundCounter rCounter = RoundCounter.getInstance();
+		while(true)
+		{
+			if (queue.isCleared()) break;
+			else 
+			{
+				logger.log(Level.INFO,"------------------------");
+				logger.log(Level.WARNING,"Starting round :"+rCounter.getRoundNumber());
+				logger.log(Level.INFO,"------------------------");
+				phandle = control.getCurrentlyServed();
+				shared.Request in = this.waitForRequest(phandle);
+				if (in!=null)
+				{
+					try {
+						requester.processRequest(in);
+					} catch (IOException e) {
+						logger.log(Level.SEVERE,"Fatal error occured while processing request"+e.getLocalizedMessage());e.printStackTrace();
+					} catch (NullPointerException e) { continue; }
+					int player_cards_num = phandle.getStackReference().length;
+					if (player_cards_num == 0)
+					{
+						logger.log(Level.INFO,"----------------");
+						logger.log(Level.SEVERE, "GAME OVER... ");
+						logger.log(Level.INFO,"----------------");
+						try {
+							control.announceWinner();
+						} catch (IOException e) {
+							logger.log(Level.SEVERE,"Fatal error occured while announcing winner"+e.getLocalizedMessage());
+							e.printStackTrace();
+							break;
+						}
+						break;
+					}
+				}
+				else 
+				{
+					if (queue.isCleared()) break;
+				}
+				rCounter.nextRound();
+			}
+		}
+		
+	}
+  
+	public void stop() 
+	{
+		stopped=true;		
+	}
+	public void start()
+	{
+		logger.log(Level.INFO,"---------------------------------------------------------------");
+		logger.log(Level.INFO,"Welcome to Makao Game Server v2. Have a good time and good luck");
+		logger.log(Level.INFO,"---------------------------------------------------------------");
+		while(!stopped)
+		{
+			//RoundCounter.getInstance().start();
+			control = new ServerControl();
+			requester = new RequestProcessor(control);
+			queue = control.initPlayersQueue(ssocket);
+			run();
+		}		
+	}
+	public void restart()
+	{
+		stop();
+		start();
+	}
+
+}

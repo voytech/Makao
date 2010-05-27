@@ -1,0 +1,79 @@
+package fxclient;
+import shared.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.*;
+import javafx.scene.input.MouseEvent;
+
+/**
+ * @author Wojtek
+ */
+public class LobbyScene extends Scene
+{
+     public var messengerTask:MessengerTask;
+     public var player:Player;
+     public var selector:SceneSelector;
+     var players:Text[];
+     var ok = OkButton
+     {
+        x: bind width/2 - 50;
+        y: bind height - 100;
+     }
+     postinit
+     {
+           insert Text {
+                	        font: Font {
+                	            size: 40
+                	        },
+                	        x: bind 300,
+                	        y: bind 300,
+                	        content: "Player 1 - Wojtek - not redy"
+                	    } into players;
+          ok.prepare();
+          ok.onMouseClicked = function(e:MouseEvent):Void
+          {
+             ok.defaultOnClick();
+             ready();                          
+          }
+          content =  
+             [
+            	ImageView {
+          	          image : Image{url: "{__DIR__}images/intro3.png"};
+           	          fitHeight : bind height;
+           	          fitWidth  : bind width;
+               	       	 } 
+              	players,  
+              	ok
+             ];  
+         // messengerTask.messenger.addListener(this);  
+     }
+     function ready()
+     {    
+          var messenger = messengerTask.messenger;
+          messenger.sendRequest(new Request(Request.REQUEST_READY));
+          selector.nextScene();
+     }
+     public function updatePlayersInfo(infos:PlayerInfo[])
+     {
+        var lx = 300;
+        var ly = 200;
+        players = [];
+       	for (info in infos)
+       	{
+       	    insert Text {
+       	        font: Font {
+       	            size: 24
+       	        },
+       	        x: bind lx,
+       	        y: bind ly,
+       	        content: "Player {info.getId()} [ {info.getNickName()} ] {info.isReady()}"
+       	    } into players;
+       	    ly += 30;
+       	}   
+     }
+}

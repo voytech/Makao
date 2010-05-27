@@ -1,0 +1,41 @@
+package fxclient;
+import shared.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+
+/**
+ * @author Wojtek
+ */
+public class IndicatorPanel extends PanelBase
+{
+    public-read var statusLamp=NeonLight 
+    {
+        x : bind x+150;
+        y : bind y;
+    }
+    public-read var pendingRequest = ImageView
+    {
+        x : bind x;
+        y : bind y;
+    }
+    //var sourceRequest;
+    postinit
+    {
+        width = 300;
+        height = 100;
+    }
+    public function setSourceRequest(request:Request)
+    {
+        if (request.getID() == Request.REQUEST_CARD_NAME)
+        {
+            var cName = request.getArg();   
+        }
+        else 
+        if (request.getID() == Request.REQUEST_CARD_NAME)
+        {
+            var cSuit = request.getArg();        
+        }    
+    }
+    
+}
